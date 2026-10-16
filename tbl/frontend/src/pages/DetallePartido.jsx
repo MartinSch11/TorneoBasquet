@@ -217,20 +217,23 @@ export default function DetallePartido() {
   return (
     <section className="mx-auto max-w-6xl px-4 py-6 flex flex-col gap-4">
       {/* Navegación superior */}
-      <div className="flex flex-wrap items-center justify-between gap-2">
+      <div className="flex items-center justify-between gap-2">
         <Link
           to="/resultados"
-          className="inline-flex items-center gap-1 text-sm font-semibold text-text-muted hover:text-orange-500 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 rounded-md"
+          className="inline-flex items-center gap-1 text-xs sm:text-sm font-semibold text-text-muted hover:text-orange-500 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 rounded-md shrink-0"
         >
-          ‹ Volver a resultados
+          <span>‹</span>
+          <span className="sm:hidden">Volver</span>
+          <span className="hidden sm:inline">Volver a resultados</span>
         </Link>
 
         {equipoIdActual && (
           <Link
             to={`/equipos/${equipoIdActual}`}
-            className="text-xs font-semibold text-orange-600 dark:text-orange-400 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 rounded px-1"
+            className="text-xs font-semibold text-orange-600 dark:text-orange-400 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 rounded px-1 text-right truncate max-w-[210px] sm:max-w-none shrink-0"
+            title={`Ver plantel de ${equipoNombreActual}`}
           >
-            Ver plantel completo de {equipoNombreActual} ›
+            Ver plantel de {equipoNombreActual} ›
           </Link>
         )}
       </div>
@@ -319,25 +322,26 @@ export default function DetallePartido() {
                     {partido.equipo_local}
                   </span>
                 </div>
-                <span className="text-[11px] text-text-muted mt-0.5">
-                  Planilla: <strong className="tabular-nums text-text">{sumaLocal} pts</strong>{' '}
+                <div className="flex items-center gap-1.5 text-[11px] text-text-muted mt-0.5 whitespace-nowrap">
+                  <span>Planilla:</span>
+                  <strong className="tabular-nums text-text">{sumaLocal} pts</strong>
                   {jugadoresLocal.length > 0 && (
-                    <span className="text-text-muted/80">
+                    <span className="text-text-muted/80 whitespace-nowrap">
                       ({progresLocal}/{jugadoresLocal.length} jug.)
                     </span>
                   )}
-                </span>
+                </div>
               </div>
             </div>
 
             {/* Casillero de Marcador Oficial */}
-            <div className="flex items-center gap-2 shrink-0 ml-2">
-              <div data-ui="marcador-box" className="flex items-center gap-2 bg-page border border-border px-2.5 py-1.5 rounded-lg">
-                <span className="text-[9px] uppercase font-bold tracking-wider text-text-muted">
+            <div className="shrink-0 ml-2">
+              <div data-ui="marcador-box" className="flex flex-col items-center justify-center bg-page border border-border px-2.5 py-1 sm:py-1.5 rounded-lg min-w-[58px] text-center">
+                <span className="text-[8px] sm:text-[9px] uppercase font-bold tracking-wider text-text-muted leading-tight">
                   Marcador
                 </span>
                 <span
-                  className={`font-athletic text-xl sm:text-2xl font-extrabold tabular-nums ${
+                  className={`font-athletic text-xl sm:text-2xl font-extrabold tabular-nums leading-none mt-0.5 ${
                     localGano ? 'text-orange-600 dark:text-orange-400' : 'text-text'
                   }`}
                 >
@@ -378,25 +382,26 @@ export default function DetallePartido() {
                     {partido.equipo_visitante}
                   </span>
                 </div>
-                <span className="text-[11px] text-text-muted mt-0.5">
-                  Planilla: <strong className="tabular-nums text-text">{sumaVisitante} pts</strong>{' '}
+                <div className="flex items-center gap-1.5 text-[11px] text-text-muted mt-0.5 whitespace-nowrap">
+                  <span>Planilla:</span>
+                  <strong className="tabular-nums text-text">{sumaVisitante} pts</strong>
                   {jugadoresVisitante.length > 0 && (
-                    <span className="text-text-muted/80">
+                    <span className="text-text-muted/80 whitespace-nowrap">
                       ({progresVisitante}/{jugadoresVisitante.length} jug.)
                     </span>
                   )}
-                </span>
+                </div>
               </div>
             </div>
 
             {/* Casillero de Marcador Oficial */}
-            <div className="flex items-center gap-2 shrink-0 ml-2">
-              <div data-ui="marcador-box" className="flex items-center gap-2 bg-page border border-border px-2.5 py-1.5 rounded-lg">
-                <span className="text-[9px] uppercase font-bold tracking-wider text-text-muted">
+            <div className="shrink-0 ml-2">
+              <div data-ui="marcador-box" className="flex flex-col items-center justify-center bg-page border border-border px-2.5 py-1 sm:py-1.5 rounded-lg min-w-[58px] text-center">
+                <span className="text-[8px] sm:text-[9px] uppercase font-bold tracking-wider text-text-muted leading-tight">
                   Marcador
                 </span>
                 <span
-                  className={`font-athletic text-xl sm:text-2xl font-extrabold tabular-nums ${
+                  className={`font-athletic text-xl sm:text-2xl font-extrabold tabular-nums leading-none mt-0.5 ${
                     visitGano ? 'text-orange-600 dark:text-orange-400' : 'text-text'
                   }`}
                 >
@@ -409,22 +414,40 @@ export default function DetallePartido() {
 
         {/* Destacado del partido / aviso de marcador global */}
         {maximoAnotador ? (
-          <div data-ui="highlight-banner" className="flex flex-wrap items-center justify-between gap-2 px-3 py-2 rounded-xl border border-orange-500/30 bg-orange-500/10 text-xs">
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-orange-500 shrink-0" />
-              <span className="text-text-muted">Máximo anotador del encuentro:</span>
-              <strong className="text-text font-bold">
-                {maximoAnotador.nombre}
-                {maximoAnotador.numero !== null && maximoAnotador.numero !== undefined
-                  ? ` (#${maximoAnotador.numero})`
-                  : ''}
-              </strong>
-              <span className="text-text-muted">· {maximoAnotador.equipo}</span>
+          <div
+            data-ui="highlight-banner"
+            className="flex items-center justify-between gap-3 px-3.5 py-2.5 rounded-xl border border-orange-500/30 bg-orange-500/10"
+          >
+            <div className="flex items-center gap-2.5 min-w-0">
+              <span className="w-2.5 h-2.5 rounded-full bg-orange-500 shrink-0" />
+              <div className="min-w-0">
+                <span className="block text-[10px] sm:text-xs font-bold uppercase tracking-wider text-orange-600 dark:text-orange-400">
+                  Máximo anotador del partido
+                </span>
+                <div className="flex items-center gap-1.5 min-w-0">
+                  <span className="text-xs sm:text-sm font-bold text-text truncate">
+                    {maximoAnotador.nombre}
+                    {maximoAnotador.numero !== null && maximoAnotador.numero !== undefined
+                      ? ` (#${maximoAnotador.numero})`
+                      : ''}
+                  </span>
+                  <span className="text-[11px] sm:text-xs text-text-muted whitespace-nowrap shrink-0">
+                    · {maximoAnotador.equipo}
+                  </span>
+                </div>
+              </div>
             </div>
-            <span className="font-athletic font-bold text-sm text-orange-600 dark:text-orange-400 tabular-nums">
-              {maximoAnotador.puntos} PTS
-              {maximoAnotador.triples > 0 ? ` (${maximoAnotador.triples} 3P)` : ''}
-            </span>
+
+            <div className="text-right shrink-0">
+              <div className="font-athletic font-extrabold text-base sm:text-lg text-orange-600 dark:text-orange-400 tabular-nums leading-none">
+                {maximoAnotador.puntos} <span className="text-xs font-display">PTS</span>
+              </div>
+              {maximoAnotador.triples > 0 && (
+                <div className="text-[10px] sm:text-[11px] text-text-muted tabular-nums mt-0.5 whitespace-nowrap">
+                  {maximoAnotador.triples} {maximoAnotador.triples === 1 ? 'triple' : 'triples'}
+                </div>
+              )}
+            </div>
           </div>
         ) : yaJugado && !tienePlanillaCargada ? (
           <div data-ui="info-banner" className="flex items-center gap-2 px-3 py-2 rounded-xl border border-border bg-page text-xs text-text-muted">

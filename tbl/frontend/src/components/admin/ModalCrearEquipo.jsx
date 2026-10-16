@@ -133,11 +133,14 @@ export default function ModalCrearEquipo({
         })
       }
 
-      if (onEquipoGuardado) {
-        onEquipoGuardado(resEquipo.data)
-      }
-      if (onEquipoCreado) {
-        onEquipoCreado(resEquipo.data)
+      if (equipoAEditar) {
+        if (onEquipoGuardado) {
+          onEquipoGuardado(resEquipo.data)
+        }
+      } else {
+        if (onEquipoCreado) {
+          onEquipoCreado(resEquipo.data)
+        }
       }
       onClose?.()
     } catch (err) {

@@ -93,11 +93,14 @@ export default function ModalCrearTorneo({
         res = await api.post('/torneos', payload)
       }
 
-      if (onTorneoGuardado) {
-        onTorneoGuardado(res.data)
-      }
-      if (onTorneoCreado) {
-        onTorneoCreado(res.data)
+      if (torneoAEditar) {
+        if (onTorneoGuardado) {
+          onTorneoGuardado(res.data)
+        }
+      } else {
+        if (onTorneoCreado) {
+          onTorneoCreado(res.data)
+        }
       }
       onClose?.()
     } catch (err) {
