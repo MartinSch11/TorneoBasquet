@@ -120,7 +120,7 @@ function AccederBoton({ onAbrirLogin, onAccionMenu, esMobile }) {
       <button
         type="button"
         onClick={() => setMenu((m) => !m)}
-        className={`flex items-center justify-center gap-2 rounded-xl border border-orange-500/40 bg-orange-500/10 font-semibold text-orange-600 dark:text-orange-400 transition-colors duration-150 hover:bg-orange-600 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 active:scale-95 ${
+        className={`flex items-center justify-center gap-2 rounded-xl border border-orange-500/40 bg-orange-500/10 font-semibold text-orange-600 dark:text-orange-400 transition-colors duration-150 hover:bg-orange-600 hover:text-white dark:hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 active:scale-95 ${
           esMobile ? 'w-full py-3 text-base' : 'px-4 py-2 text-sm'
         }`}
         aria-expanded={menu}
