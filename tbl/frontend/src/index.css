@@ -1,0 +1,154 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+html.dark,
+html:not(.light) {
+  color-scheme: dark;
+  --color-base: 11 15 25;
+  --color-surface: 18 24 39;
+  --color-accent: 234 88 12;
+  --color-accent-muted: 194 65 12;
+  --color-text: 248 250 252;
+  --color-text-muted: 148 163 184;
+  --color-border: 30 41 59;
+  --color-success: 16 185 129;
+  --color-danger: 239 68 68;
+}
+
+html.light {
+  color-scheme: light;
+  --color-base: 248 250 252;
+  --color-surface: 255 255 255;
+  --color-accent: 234 88 12;
+  --color-accent-muted: 194 65 12;
+  --color-text: 15 23 42;
+  --color-text-muted: 71 85 105;
+  --color-border: 203 213 225;
+  --color-success: 5 150 105;
+  --color-danger: 220 38 38;
+}
+
+html,
+body {
+  background-color: rgb(var(--color-base));
+  color: rgb(var(--color-text));
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+@layer base {
+  *, *::before, *::after {
+    cursor: default;
+  }
+
+  body {
+    @apply font-body antialiased;
+    font-size: 16px;
+  }
+
+  button,
+  a,
+  select,
+  summary,
+  [role="button"],
+  [type="button"],
+  [type="submit"],
+  [type="reset"] {
+    cursor: pointer;
+  }
+
+  select option {
+    background-color: rgb(var(--color-surface));
+    color: rgb(var(--color-text));
+  }
+
+  button *,
+  a *,
+  [role="button"] * {
+    cursor: pointer;
+  }
+
+  input:not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="checkbox"]):not([type="radio"]),
+  textarea,
+  [contenteditable="true"] {
+    cursor: text;
+  }
+
+  input[type="checkbox"],
+  input[type="radio"],
+  input[type="file"] {
+    cursor: pointer;
+  }
+
+  button:disabled,
+  button[disabled],
+  input:disabled,
+  select:disabled,
+  textarea:disabled {
+    cursor: not-allowed;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+
+@keyframes fadein {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.hero-fade-in {
+  animation: fadein 0.5s ease-out;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 32s linear infinite;
+  will-change: transform;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* Swiper Hero Pagination */
+.swiper-pagination-bullet {
+  background: rgba(255, 255, 255, 0.4) !important;
+  opacity: 1 !important;
+  transition: width 0.3s ease, background-color 0.3s ease;
+}
+.swiper-pagination-bullet-active {
+  background: rgb(245, 158, 11) !important;
+  width: 24px !important;
+  border-radius: 4px !important;
+}

@@ -1,0 +1,25 @@
+﻿# Dependencias y entornos virtuales
+node_modules/
+.venv/
+venv/
+env/
+
+# Compilados y cachés
+dist/
+build/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.vite/
+
+# Variables de entorno privadas
+.env
+.env.local
+.env.*.local
+
+# Sistema y herramientas locales
+.DS_Store
+Thumbs.db
+.agents/
+.agent/
+.taste-skill/
