@@ -38,6 +38,8 @@ app.add_middleware(
 app.include_router(api)
 
 from pathlib import Path
+from fastapi import HTTPException
+from fastapi.responses import FileResponse
 from starlette.staticfiles import StaticFiles
 
 uploads_dir = Path("uploads")
@@ -49,3 +51,19 @@ app.mount("/uploads", StaticFiles(directory=uploads_dir), name="uploads")
 @app.get("/health")
 async def health() -> dict[str, str]:
     return {"status": "ok"}
+
+
+static_dir = Path("static")
+if (static_dir / "index.html").is_file():
+    assets_dir = static_dir / "assets"
+    if assets_dir.is_dir():
+        app.mount("/assets", StaticFiles(directory=assets_dir), name="frontend_assets")
+
+    @app.get("/{full_path:path}", include_in_schema=False)
+    async def serve_spa(full_path: str):
+        if full_path.startswith(("api/", "uploads/", "docs", "redoc", "openapi.json", "health")):
+            raise HTTPException(status_code=404, detail="Not Found")
+        candidate = (static_dir / full_path).resolve()
+        if full_path and candidate.is_file() and static_dir.resolve() in candidate.parents:
+            return FileResponse(candidate)
+        return FileResponse(static_dir / "index.html")
