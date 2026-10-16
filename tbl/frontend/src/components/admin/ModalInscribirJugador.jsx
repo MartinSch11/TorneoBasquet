@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import api from '../../services/api'
 import { IconClose } from '../ui/Icon'
+import useBodyLock from '../../hooks/useBodyLock'
 
 export default function ModalInscribirJugador({
   isOpen,
@@ -14,6 +15,7 @@ export default function ModalInscribirJugador({
   equipos = [],
   defaultEquipoId = null,
 }) {
+  useBodyLock(isOpen)
   const [selectedEquipoId, setSelectedEquipoId] = useState('')
   const [nombre, setNombre] = useState('')
   const [apellido, setApellido] = useState('')
@@ -148,7 +150,7 @@ export default function ModalInscribirJugador({
   return createPortal(
     <div
       data-ui="modal-overlay"
-      className="fixed inset-0 z-[1000010] flex items-center justify-center bg-black/70 p-4 animate-in fade-in duration-200"
+      className="fixed inset-0 z-[1000010] flex items-center justify-center bg-black/70 p-4 animate-in fade-in duration-200 touch-none overscroll-contain"
       onClick={() => {
         if (!guardando) onClose?.()
       }}
@@ -158,7 +160,7 @@ export default function ModalInscribirJugador({
     >
       <div
         data-ui="modal"
-        className="relative z-[1000020] w-full max-w-md rounded-2xl border border-border bg-surface text-text p-6 animate-in zoom-in-95 duration-200"
+        className="relative z-[1000020] w-full max-w-md max-h-[92vh] overflow-y-auto rounded-2xl border border-border bg-surface text-text p-6 animate-in zoom-in-95 duration-200 touch-auto overscroll-contain"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Cabecera */}

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import api from '../../services/api'
 import { IconClose } from '../ui/Icon'
+import useBodyLock from '../../hooks/useBodyLock'
 
 export default function ModalCrearCancha({
   isOpen,
@@ -9,6 +10,7 @@ export default function ModalCrearCancha({
   onCanchaGuardada,
   canchaAEditar = null,
 }) {
+  useBodyLock(isOpen)
   const [nombre, setNombre] = useState('')
   const [direccion, setDireccion] = useState('')
   const [ciudad, setCiudad] = useState('Córdoba')
@@ -81,11 +83,11 @@ export default function ModalCrearCancha({
   return createPortal(
     <div
       data-ui="modal-overlay"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 animate-in fade-in duration-200 touch-none overscroll-contain"
       role="dialog"
       aria-modal="true"
     >
-      <div data-ui="modal" className="relative w-full max-w-md rounded-2xl border border-border bg-surface p-6 animate-in zoom-in-95 duration-200">
+      <div data-ui="modal" className="relative w-full max-w-md max-h-[92vh] overflow-y-auto rounded-2xl border border-border bg-surface p-6 animate-in zoom-in-95 duration-200 touch-auto overscroll-contain">
         {/* Cabecera del Modal */}
         <div data-ui="modal-header" className="flex items-center justify-between pb-3 mb-4 border-b border-border">
           <div>

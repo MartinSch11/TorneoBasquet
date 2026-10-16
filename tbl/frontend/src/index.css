@@ -37,6 +37,12 @@ body {
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
+html.modal-open,
+body.modal-open {
+  overflow: hidden !important;
+  overscroll-behavior: none !important;
+}
+
 @layer base {
   *, *::before, *::after {
     cursor: default;

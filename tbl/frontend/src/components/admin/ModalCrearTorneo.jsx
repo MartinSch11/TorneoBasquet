@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import api from '../../services/api'
 import { IconClose } from '../ui/Icon'
+import useBodyLock from '../../hooks/useBodyLock'
 
 export default function ModalCrearTorneo({
   isOpen,
@@ -10,6 +11,7 @@ export default function ModalCrearTorneo({
   onTorneoGuardado,
   torneoAEditar = null,
 }) {
+  useBodyLock(isOpen)
   const [nombre, setNombre] = useState('LBA')
   const [categoria, setCategoria] = useState('')
   const [temporada, setTemporada] = useState(String(new Date().getFullYear()))
@@ -115,7 +117,7 @@ export default function ModalCrearTorneo({
   return createPortal(
     <div
       data-ui="modal-overlay"
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 animate-in fade-in duration-200 touch-none overscroll-contain"
       onClick={() => {
         if (!guardando) onClose?.()
       }}
@@ -125,7 +127,7 @@ export default function ModalCrearTorneo({
     >
       <div
         data-ui="modal"
-        className="relative w-full max-w-lg rounded-2xl border border-border bg-surface text-text p-6 animate-in zoom-in-95 duration-200"
+        className="relative w-full max-w-lg max-h-[92vh] overflow-y-auto rounded-2xl border border-border bg-surface text-text p-6 animate-in zoom-in-95 duration-200 touch-auto overscroll-contain"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Cabecera */}

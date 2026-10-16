@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom'
 import api from '../../services/api'
 import Spinner from '../ui/Spinner'
 import { IconClose } from '../ui/Icon'
+import useBodyLock from '../../hooks/useBodyLock'
 
 function parseError(err) {
   const detail = err.response?.data?.detail
@@ -22,6 +23,7 @@ export default function ModalProgramarPartido({
   initialTorneoId,
   onPartidoCreado,
 }) {
+  useBodyLock(isOpen)
   const [torneos, setTorneos] = useState([])
   const [equipos, setEquipos] = useState([])
   const [canchas, setCanchas] = useState([])
@@ -179,7 +181,7 @@ export default function ModalProgramarPartido({
   return createPortal(
     <div
       data-ui="modal-overlay"
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 animate-in fade-in duration-200 touch-none overscroll-contain"
       onClick={() => {
         if (!saving) onClose?.()
       }}
@@ -189,7 +191,7 @@ export default function ModalProgramarPartido({
     >
       <div
         data-ui="modal"
-        className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl border border-border bg-surface text-text p-6 animate-in zoom-in-95 duration-200 flex flex-col gap-4"
+        className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl border border-border bg-surface text-text p-6 animate-in zoom-in-95 duration-200 flex flex-col gap-4 touch-auto overscroll-contain"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Cabecera */}

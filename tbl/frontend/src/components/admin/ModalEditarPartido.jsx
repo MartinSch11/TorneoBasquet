@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import api from '../../services/api'
 import { IconClose } from '../ui/Icon'
+import useBodyLock from '../../hooks/useBodyLock'
 
 export default function ModalEditarPartido({
   isOpen,
@@ -11,6 +12,7 @@ export default function ModalEditarPartido({
   onPartidoEliminado,
   canchas = [],
 }) {
+  useBodyLock(isOpen)
   const [fechaNumero, setFechaNumero] = useState(1)
   const [fechaDia, setFechaDia] = useState('')
   const [horario, setHorario] = useState('')
@@ -124,7 +126,7 @@ export default function ModalEditarPartido({
   return createPortal(
     <div
       data-ui="modal-overlay"
-      className="fixed inset-0 z-[1000000] flex items-center justify-center p-4 bg-black/70 animate-in fade-in duration-200"
+      className="fixed inset-0 z-[1000000] flex items-center justify-center p-4 bg-black/70 animate-in fade-in duration-200 touch-none overscroll-contain"
       onClick={() => {
         if (!guardando) onClose()
       }}
@@ -133,7 +135,7 @@ export default function ModalEditarPartido({
     >
       <div
         data-ui="modal"
-        className="w-full max-w-lg rounded-2xl border border-border bg-surface p-6 relative z-[1000001] animate-in zoom-in-95 duration-200 text-text"
+        className="w-full max-w-lg max-h-[92vh] overflow-y-auto rounded-2xl border border-border bg-surface p-6 relative z-[1000001] animate-in zoom-in-95 duration-200 text-text touch-auto overscroll-contain"
         onClick={(e) => e.stopPropagation()}
       >
         <div data-ui="modal-header" className="flex items-center justify-between pb-3 border-b border-border mb-4">
