@@ -3,6 +3,8 @@ import api from '../../services/api'
 import Spinner from '../ui/Spinner'
 import { useToast } from '../../context/ToastContext'
 import ModalCrearSponsor from './ModalCrearSponsor'
+import MenuAcciones from '../ui/MenuAcciones'
+import { IconEdit, IconTrash, IconPlay, IconPause } from '../ui/Icon'
 
 export default function GestionSponsors() {
   const { toast } = useToast()
@@ -179,14 +181,14 @@ export default function GestionSponsors() {
       ) : (
         <div data-ui="admin-table-container" className="overflow-hidden rounded-xl border border-border bg-surface">
           <div className="overflow-x-auto">
-            <table data-ui="admin-table" className="w-full text-left text-xs">
+            <table data-ui="admin-table" className="w-full min-w-[580px] text-left text-xs">
               <thead data-ui="admin-thead" className="border-b border-border/80 bg-surface/80 text-[11px] font-bold uppercase text-text-muted">
                 <tr>
                   <th scope="col" className="py-3 px-4">Marca / Empresa</th>
                   <th scope="col" className="py-3 px-3">Sitio Web</th>
                   <th scope="col" className="py-3 px-3 text-center">Orden</th>
                   <th scope="col" className="py-3 px-3 text-center">Estado</th>
-                  <th scope="col" className="py-3 px-4 text-right">Acciones</th>
+                  <th scope="col" className="py-3 px-4 text-center">Acciones</th>
                 </tr>
               </thead>
               <tbody data-ui="admin-tbody" className="divide-y divide-border/40">
@@ -247,35 +249,35 @@ export default function GestionSponsors() {
                     </td>
 
                     {/* Acciones */}
-                    <td className="py-3 px-4 text-right">
-                      <div className="flex items-center justify-end gap-1.5">
-                        <button
-                          type="button"
-                          onClick={() => handleAbrirEditar(s)}
-                          className="h-7 px-2.5 rounded-lg border border-border bg-surface text-xs font-semibold text-text hover:border-amber-500/50 hover:text-amber-500 transition-colors inline-flex items-center justify-center"
-                        >
-                          Editar
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => handleToggleActivo(s)}
+                    <td className="py-3 px-4 text-center">
+                      <div className="flex items-center justify-center">
+                        <MenuAcciones
                           disabled={procesandoId === s.id}
-                          className={`h-7 px-2.5 rounded-lg border text-xs font-semibold transition-colors inline-flex items-center justify-center ${
-                            s.activo
-                              ? 'border-border bg-surface text-text-muted hover:border-danger/50 hover:text-danger'
-                              : 'border-emerald-500/30 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20'
-                          }`}
-                        >
-                          {procesandoId === s.id ? '...' : s.activo ? 'Inactivar' : 'Activar'}
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => handleEliminarSponsor(s)}
-                          disabled={procesandoId === s.id}
-                          className="h-7 px-2.5 rounded-lg border border-border bg-surface text-xs font-semibold text-text-muted hover:border-danger/50 hover:text-danger transition-colors inline-flex items-center justify-center disabled:opacity-50"
-                        >
-                          Eliminar
-                        </button>
+                          acciones={[
+                            {
+                              label: 'Editar sponsor',
+                              icon: <IconEdit className="w-3.5 h-3.5 text-text-muted" />,
+                              onClick: () => handleAbrirEditar(s),
+                            },
+                            {
+                              label: s.activo ? 'Inactivar sponsor' : 'Activar sponsor',
+                              icon: s.activo ? (
+                                <IconPause className="w-3.5 h-3.5 text-orange-500" />
+                              ) : (
+                                <IconPlay className="w-3.5 h-3.5 text-emerald-500" />
+                              ),
+                              warning: Boolean(s.activo),
+                              success: !s.activo,
+                              onClick: () => handleToggleActivo(s),
+                            },
+                            {
+                              label: 'Eliminar sponsor',
+                              icon: <IconTrash className="w-3.5 h-3.5 text-danger" />,
+                              danger: true,
+                              onClick: () => handleEliminarSponsor(s),
+                            },
+                          ]}
+                        />
                       </div>
                     </td>
                   </tr>

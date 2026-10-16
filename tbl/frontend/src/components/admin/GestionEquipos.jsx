@@ -5,6 +5,8 @@ import EscudoEquipo from '../ui/EscudoEquipo'
 import { useToast } from '../../context/ToastContext'
 import ModalCrearEquipo from './ModalCrearEquipo'
 import ModalInscribirJugador from './ModalInscribirJugador'
+import MenuAcciones from '../ui/MenuAcciones'
+import { IconEdit, IconTrash } from '../ui/Icon'
 
 export default function GestionEquipos() {
   const { toast } = useToast()
@@ -602,8 +604,12 @@ export default function GestionEquipos() {
                         <thead data-ui="table-head" className="border-b border-border/80 bg-surface/80 text-[11px] font-bold uppercase tracking-wider text-text-muted">
                           <tr>
                             <th className="py-2.5 px-3 w-14 text-center">#</th>
-                            <th className="py-2.5 px-3">Jugador</th>
-                            <th className="py-2.5 px-4 w-36 text-right">Acciones</th>
+                            <th className="py-2.5 px-3 w-full">Jugador</th>
+                            <th className="py-2.5 px-4 text-right">
+                              <div className="flex items-center justify-end">
+                                <span className="w-20 text-center whitespace-nowrap">Acciones</span>
+                              </div>
+                            </th>
                           </tr>
                         </thead>
                         <tbody data-ui="table-body" className="divide-y divide-border/40">
@@ -621,22 +627,25 @@ export default function GestionEquipos() {
                                 </span>
                               </td>
                               <td className="py-2.5 px-4 text-right">
-                                <div className="flex items-center justify-end gap-1.5">
-                                  <button
-                                    type="button"
-                                    onClick={() => handleAbrirEditarJugador(j)}
-                                    className="h-7 px-2.5 rounded-lg border border-border bg-surface text-xs font-semibold text-text hover:border-orange-500/50 hover:text-orange-500 transition-colors inline-flex items-center justify-center focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-orange-500"
-                                  >
-                                    Editar
-                                  </button>
-                                  <button
-                                    type="button"
-                                    disabled={eliminandoJugadorId === j.id}
-                                    onClick={() => handleEliminarJugador(j)}
-                                    className="h-7 px-2.5 rounded-lg border border-border bg-surface text-xs font-semibold text-text-muted hover:border-danger/50 hover:text-danger transition-colors inline-flex items-center justify-center disabled:opacity-50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-danger"
-                                  >
-                                    {eliminandoJugadorId === j.id ? '...' : 'Quitar'}
-                                  </button>
+                                <div className="flex items-center justify-end">
+                                  <div className="w-20 flex items-center justify-center">
+                                    <MenuAcciones
+                                      disabled={eliminandoJugadorId === j.id}
+                                      acciones={[
+                                        {
+                                          label: 'Editar jugador',
+                                          icon: <IconEdit className="w-3.5 h-3.5 text-text-muted" />,
+                                          onClick: () => handleAbrirEditarJugador(j),
+                                        },
+                                        {
+                                          label: 'Quitar jugador',
+                                          icon: <IconTrash className="w-3.5 h-3.5 text-danger" />,
+                                          danger: true,
+                                          onClick: () => handleEliminarJugador(j),
+                                        },
+                                      ]}
+                                    />
+                                  </div>
                                 </div>
                               </td>
                             </tr>

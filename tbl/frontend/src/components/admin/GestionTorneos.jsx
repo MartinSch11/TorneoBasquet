@@ -4,6 +4,8 @@ import Spinner from '../ui/Spinner'
 import { useToast } from '../../context/ToastContext'
 import ModalCrearTorneo from './ModalCrearTorneo'
 import ModalFinalizarTorneo from './ModalFinalizarTorneo'
+import MenuAcciones from '../ui/MenuAcciones'
+import { IconEdit, IconCheck, IconPlay, IconTrash } from '../ui/Icon'
 
 export default function GestionTorneos() {
   const { toast } = useToast()
@@ -199,7 +201,7 @@ export default function GestionTorneos() {
       ) : (
         <div data-ui="admin-table-container" className="overflow-hidden rounded-xl border border-border bg-surface">
           <div className="overflow-x-auto">
-            <table data-ui="admin-table" className="w-full text-left text-xs">
+            <table data-ui="admin-table" className="w-full min-w-[640px] text-left text-xs">
               <thead data-ui="admin-thead" className="border-b border-border/80 bg-surface/80 text-[11px] font-bold uppercase text-text-muted">
                 <tr>
                   <th scope="col" className="py-3 px-4">Torneo / Liga</th>
@@ -207,7 +209,7 @@ export default function GestionTorneos() {
                   <th scope="col" className="py-3 px-3 text-center">Temporada</th>
                   <th scope="col" className="py-3 px-3">Zona / Grupo</th>
                   <th scope="col" className="py-3 px-3 text-center">Estado</th>
-                  <th scope="col" className="py-3 px-4 text-right">Acciones</th>
+                  <th scope="col" className="py-3 px-4 text-center">Acciones</th>
                 </tr>
               </thead>
               <tbody data-ui="admin-tbody" className="divide-y divide-border/40">
@@ -264,46 +266,44 @@ export default function GestionTorneos() {
                     </td>
 
                     {/* Acciones */}
-                    <td className="py-3 px-4 text-right">
-                      <div className="flex items-center justify-end gap-1.5">
-                        <button
-                          type="button"
-                          onClick={() => handleAbrirEditar(t)}
-                          className="h-7 px-2.5 rounded-lg border border-border bg-surface text-xs font-semibold text-text hover:border-amber-500/50 hover:text-amber-500 transition-colors inline-flex items-center justify-center"
-                        >
-                          Editar
-                        </button>
-
-                        {t.estado === 'activo' && (
-                          <button
-                            type="button"
-                            onClick={() => setTorneoAFinalizar(t)}
-                            disabled={procesandoId === t.id}
-                            className="h-7 px-2.5 rounded-lg border border-border bg-surface text-xs font-semibold text-text-muted hover:border-orange-500/50 hover:text-orange-500 transition-colors inline-flex items-center justify-center disabled:opacity-50 cursor-pointer"
-                          >
-                            Finalizar
-                          </button>
-                        )}
-
-                        {t.estado !== 'activo' && t.estado !== 'inactivo' && (
-                          <button
-                            type="button"
-                            onClick={() => handleToggleEstado(t, 'activo')}
-                            disabled={procesandoId === t.id}
-                            className="h-7 px-2.5 rounded-lg border border-emerald-500/30 bg-emerald-500/10 text-xs font-semibold text-emerald-400 hover:bg-emerald-500/20 transition-colors inline-flex items-center justify-center disabled:opacity-50"
-                          >
-                            Activar
-                          </button>
-                        )}
-
-                        <button
-                          type="button"
-                          onClick={() => handleEliminarTorneo(t)}
+                    <td className="py-3 px-4 text-center">
+                      <div className="flex items-center justify-center">
+                        <MenuAcciones
                           disabled={procesandoId === t.id}
-                          className="h-7 px-2.5 rounded-lg border border-border bg-surface text-xs font-semibold text-text-muted hover:border-danger/50 hover:text-danger transition-colors inline-flex items-center justify-center disabled:opacity-50"
-                        >
-                          Dar de baja
-                        </button>
+                          acciones={[
+                            {
+                              label: 'Editar torneo',
+                              icon: <IconEdit className="w-3.5 h-3.5 text-text-muted" />,
+                              onClick: () => handleAbrirEditar(t),
+                            },
+                            ...(t.estado === 'activo'
+                              ? [
+                                  {
+                                    label: 'Finalizar torneo',
+                                    icon: <IconCheck className="w-3.5 h-3.5 text-orange-500" />,
+                                    warning: true,
+                                    onClick: () => setTorneoAFinalizar(t),
+                                  },
+                                ]
+                              : []),
+                            ...(t.estado !== 'activo' && t.estado !== 'inactivo'
+                              ? [
+                                  {
+                                    label: 'Activar torneo',
+                                    icon: <IconPlay className="w-3.5 h-3.5 text-emerald-500" />,
+                                    success: true,
+                                    onClick: () => handleToggleEstado(t, 'activo'),
+                                  },
+                                ]
+                              : []),
+                            {
+                              label: 'Dar de baja',
+                              icon: <IconTrash className="w-3.5 h-3.5 text-danger" />,
+                              danger: true,
+                              onClick: () => handleEliminarTorneo(t),
+                            },
+                          ]}
+                        />
                       </div>
                     </td>
                   </tr>
