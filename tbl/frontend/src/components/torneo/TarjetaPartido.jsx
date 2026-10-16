@@ -74,11 +74,11 @@ export default function TarjetaPartido({ partido, jugado = undefined, mostrarBad
         <div className="flex flex-col items-center justify-center px-1.5 sm:px-2 shrink-0">
           {yaJugado ? (
             <div className="flex items-center gap-1.5 sm:gap-2 font-athletic text-2xl sm:text-3xl font-extrabold tracking-tight tabular-nums">
-              <span className={localGano ? 'text-orange-600 dark:text-orange-400' : 'text-slate-500 dark:text-slate-300 font-semibold'}>
+              <span className={localGano ? 'text-orange-600 dark:text-orange-400' : 'text-text-muted font-semibold'}>
                 {partido.pts_local ?? 0}
               </span>
-              <span className="text-slate-400 dark:text-slate-600 text-lg sm:text-xl font-light">-</span>
-              <span className={visitGano ? 'text-orange-600 dark:text-orange-400' : 'text-slate-500 dark:text-slate-300 font-semibold'}>
+              <span className="text-border text-lg sm:text-xl font-light">-</span>
+              <span className={visitGano ? 'text-orange-600 dark:text-orange-400' : 'text-text-muted font-semibold'}>
                 {partido.pts_visitante ?? 0}
               </span>
             </div>

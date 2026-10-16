@@ -41,7 +41,7 @@ export default function EstadisticasEquipos() {
       { key: 'pj', label: 'PJ', sortable: true },
       { key: 'pc', label: 'PC', sortable: true, render: (f) => <span className="font-extrabold font-athletic text-base text-orange-600 dark:text-orange-400">{f.pc}</span> },
       { key: 'pr', label: 'PR', sortable: true },
-      { key: 'dif', label: 'DIF', sortable: true, render: (f) => <span className={f.dif > 0 ? 'text-emerald-700 dark:text-emerald-400 font-bold' : f.dif < 0 ? 'text-rose-700 dark:text-rose-400 font-bold' : 'text-slate-500 dark:text-slate-400 font-medium'}>{f.dif > 0 ? `+${f.dif}` : f.dif}</span> },
+      { key: 'dif', label: 'DIF', sortable: true, render: (f) => <span className={f.dif > 0 ? 'text-emerald-700 dark:text-emerald-400 font-bold' : f.dif < 0 ? 'text-rose-700 dark:text-rose-400 font-bold' : 'text-text-muted font-medium'}>{f.dif > 0 ? `+${f.dif}` : f.dif}</span> },
     ],
     efectividad: [
       { key: 'posicion', label: '#', sortable: true, render: (f) => <span className="font-athletic font-bold text-orange-600 dark:text-orange-400">{f.posicion}</span> },

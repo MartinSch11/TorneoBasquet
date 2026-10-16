@@ -67,7 +67,7 @@ function BotonTema() {
       aria-label={theme === 'dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
       title={theme === 'dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
     >
-      {theme === 'dark' ? <IconSun className="w-5 h-5 text-amber-400" /> : <IconMoon className="w-5 h-5 text-slate-700 dark:text-slate-300" />}
+      {theme === 'dark' ? <IconSun className="w-5 h-5 text-amber-400" /> : <IconMoon className="w-5 h-5 text-neutral-700 dark:text-neutral-200" />}
     </button>
   )
 }

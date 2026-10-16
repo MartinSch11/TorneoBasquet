@@ -46,12 +46,12 @@ export default function TablaOrdenable({ columns, data, ordenInicial = [], rowKe
             <span>Restaurar orden por defecto</span>
           </button>
         ) : (
-          <span className="text-slate-600 dark:text-slate-400 font-medium sm:hidden flex items-center gap-1 text-[11px] truncate">
+          <span className="text-text-muted font-medium sm:hidden flex items-center gap-1 text-[11px] truncate">
             <IconSwipe className="w-3.5 h-3.5" />
             <span>Deslizá para ver más</span>
           </span>
         )}
-        <span className="ml-auto tabular-nums font-semibold text-slate-600 dark:text-slate-400 whitespace-nowrap shrink-0">{ordenado.length} {itemLabel}</span>
+        <span className="ml-auto tabular-nums font-semibold text-text-muted whitespace-nowrap shrink-0">{ordenado.length} {itemLabel}</span>
       </div>
 
       {/* Contenedor con scroll horizontal para celulares */}

@@ -23,7 +23,7 @@ export default function Posiciones() {
       label: '#',
       sortable: true,
       render: (f) => (
-        <span className={`font-athletic text-base font-bold tabular-nums ${f.posicion <= 4 ? 'text-orange-600 dark:text-orange-400' : 'text-slate-500 dark:text-slate-400'}`}>
+        <span className={`font-athletic text-base font-bold tabular-nums ${f.posicion <= 4 ? 'text-orange-600 dark:text-orange-400' : 'text-text-muted'}`}>
           {f.posicion}
         </span>
       ),
@@ -53,7 +53,7 @@ export default function Posiciones() {
         const isPos = dif > 0
         const isNeg = dif < 0
         return (
-          <span className={`font-bold tabular-nums ${isPos ? 'text-emerald-700 dark:text-emerald-400' : isNeg ? 'text-rose-700 dark:text-rose-400' : 'text-slate-500 dark:text-slate-400'}`}>
+          <span className={`font-bold tabular-nums ${isPos ? 'text-emerald-700 dark:text-emerald-400' : isNeg ? 'text-rose-700 dark:text-rose-400' : 'text-text-muted'}`}>
             {isPos ? `+${dif}` : dif}
           </span>
         )

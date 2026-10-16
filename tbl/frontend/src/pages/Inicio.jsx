@@ -232,7 +232,7 @@ export default function InicioNuevo() {
             <div className="absolute inset-0 bg-black/50" />
           </div>
         ) : (
-          <div className="absolute inset-0 z-0 bg-slate-950 opacity-90" />
+          <div className="absolute inset-0 z-0 bg-neutral-950 opacity-95" />
         )}
 
         <div className="relative z-10 mx-auto max-w-6xl px-4 py-12 sm:py-16 md:py-20">
@@ -241,7 +241,7 @@ export default function InicioNuevo() {
               Liga de Básquetbol Amateur
             </h1>
 
-            <p className="mt-4 text-base sm:text-lg text-slate-300 font-normal leading-relaxed max-w-2xl text-pretty">
+            <p className="mt-4 text-base sm:text-lg text-neutral-300 font-normal leading-relaxed max-w-2xl text-pretty">
               Torneo oficial {torneo_activo?.categoria || 'Primera División'} temporada {torneo_activo?.temporada || '2026'}. Estadísticas de juego, fixture, resultados y tabla general.
             </p>
 
@@ -267,7 +267,7 @@ export default function InicioNuevo() {
                 <span className="block font-athletic text-2xl sm:text-3xl font-bold text-orange-400">
                   {formatFase(etapa_actual)}
                 </span>
-                <span className="block text-sm uppercase text-slate-400 font-medium">Etapa en juego</span>
+                <span className="block text-sm uppercase text-neutral-400 font-medium">Etapa en juego</span>
               </div>
             </div>
           </div>
@@ -489,7 +489,7 @@ export default function InicioNuevo() {
                             idx === 0
                               ? 'bg-orange-600 text-white'
                               : idx === 1
-                              ? 'bg-slate-300 dark:bg-slate-700 text-text'
+                              ? 'bg-neutral-300 dark:bg-neutral-700 text-text'
                               : 'bg-page border border-border text-text-muted'
                           }`}
                         >

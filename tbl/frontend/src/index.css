@@ -6,15 +6,15 @@
 html.dark,
 html:not(.light) {
   color-scheme: dark;
-  --color-base: 11 15 25;
-  --color-surface: 18 24 39;
-  --color-accent: 234 88 12;
-  --color-accent-muted: 194 65 12;
-  --color-text: 248 250 252;
-  --color-text-muted: 148 163 184;
-  --color-border: 30 41 59;
-  --color-success: 16 185 129;
-  --color-danger: 239 68 68;
+  --color-base: 18 18 18;
+  --color-surface: 30 30 30;
+  --color-accent: 249 115 22;
+  --color-accent-muted: 234 88 12;
+  --color-text: 244 244 244;
+  --color-text-muted: 163 163 163;
+  --color-border: 46 46 46;
+  --color-success: 52 211 153;
+  --color-danger: 248 113 113;
 }
 
 html.light {
