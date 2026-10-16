@@ -526,7 +526,7 @@ export default function GestionEquipos() {
                           setJugadorAEditar(null)
                           setModalJugadorAbierto(true)
                         }}
-                        className="flex-1 sm:flex-initial whitespace-nowrap h-8 px-2.5 sm:px-3 rounded-lg bg-orange-600 hover:bg-orange-500 text-white font-display font-bold text-xs uppercase active:scale-95 transition-colors inline-flex items-center justify-center gap-1 sm:gap-1.5 cursor-pointer shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
+                        className="flex-1 sm:flex-initial whitespace-nowrap h-8 px-2.5 sm:px-3 rounded-lg border border-orange-500/40 bg-orange-500/15 hover:bg-orange-500/25 text-orange-600 dark:text-orange-400 font-display font-bold text-xs uppercase active:scale-95 transition-colors inline-flex items-center justify-center gap-1 sm:gap-1.5 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
                       >
                         <span className="font-bold text-sm leading-none">+</span>
                         <span className="hidden sm:inline">Inscribir Jugador</span>
@@ -548,7 +548,7 @@ export default function GestionEquipos() {
                       type="button"
                       disabled={reactivandoEquipo}
                       onClick={() => handleReactivarEquipo(equipoSeleccionadoObj)}
-                      className="flex-1 sm:flex-initial whitespace-nowrap h-8 px-2.5 sm:px-3 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] sm:text-xs font-semibold transition-colors inline-flex items-center justify-center gap-1.5 disabled:opacity-50 cursor-pointer shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+                      className="flex-1 sm:flex-initial whitespace-nowrap h-8 px-2.5 sm:px-3 rounded-lg border border-emerald-500/40 bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-600 dark:text-emerald-400 font-display font-bold text-xs uppercase active:scale-95 transition-colors inline-flex items-center justify-center gap-1.5 disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
                       title="Reactivar al equipo"
                     >
                       <span className="hidden sm:inline">Reactivar Equipo</span>
