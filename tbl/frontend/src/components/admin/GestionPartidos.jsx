@@ -227,7 +227,7 @@ export default function GestionPartidos({ initialTorneoId, onTorneoChange }) {
                   <th className="py-3 px-3">Visitante</th>
                   <th className="py-3 px-3 w-40">Cancha / Horario</th>
                   <th className="py-3 px-3 w-24 text-center">Estado</th>
-                  <th className="py-3 px-4 w-28 text-right">Planilla</th>
+                  <th className="py-3 px-4 w-32 text-right">Acciones</th>
                 </tr>
               </thead>
               <tbody data-ui="table-body" className="divide-y divide-border/40 text-[11px]">
@@ -297,9 +297,9 @@ export default function GestionPartidos({ initialTorneoId, onTorneoChange }) {
                             type="button"
                             onClick={() => setPartidoAEditar(p)}
                             title="Editar fecha, horario, sede o fase"
-                            className="h-7 px-2 rounded-lg border border-border bg-surface text-xs font-semibold text-text-muted hover:border-orange-500/50 hover:text-orange-500 transition-colors inline-flex items-center justify-center cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-orange-500"
+                            className="h-7 px-2.5 rounded-lg border border-border bg-surface text-xs font-semibold text-text hover:border-orange-500/50 hover:text-orange-500 transition-colors inline-flex items-center justify-center cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-orange-500"
                           >
-                            Datos
+                            Editar
                           </button>
                           <button
                             type="button"

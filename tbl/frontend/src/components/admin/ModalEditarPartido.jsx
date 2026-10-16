@@ -265,13 +265,13 @@ export default function ModalEditarPartido({
           </div>
 
           {/* Acciones de gestión */}
-          <div data-ui="modal-footer" className="pt-3 border-t border-border flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
-            <div className="flex items-center gap-2">
+          <div data-ui="modal-footer" className="pt-3 border-t border-border flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
               <button
                 type="button"
                 onClick={handleEliminar}
                 disabled={guardando}
-                className="h-9 px-3 rounded-xl border border-danger/40 bg-danger/10 hover:bg-danger/20 text-danger text-xs font-semibold transition-colors disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-danger"
+                className="h-9 px-3 w-full sm:w-auto rounded-xl border border-danger/40 bg-danger/10 hover:bg-danger/20 text-danger text-xs font-semibold transition-colors disabled:opacity-50 inline-flex items-center justify-center cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-danger"
               >
                 Eliminar Partido
               </button>
@@ -281,7 +281,7 @@ export default function ModalEditarPartido({
                   type="button"
                   onClick={handleVolverAPendiente}
                   disabled={guardando}
-                  className="h-9 px-3 rounded-xl border border-orange-500/40 bg-orange-500/10 hover:bg-orange-500/20 text-orange-600 dark:text-orange-400 text-xs font-semibold transition-colors disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
+                  className="h-9 px-3 w-full sm:w-auto rounded-xl border border-orange-500/40 bg-orange-500/10 hover:bg-orange-500/20 text-orange-600 dark:text-orange-400 text-xs font-semibold transition-colors disabled:opacity-50 inline-flex items-center justify-center cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
                   title="Reiniciar partido y borrar resultado"
                 >
                   Volver a Pendiente
@@ -289,19 +289,19 @@ export default function ModalEditarPartido({
               )}
             </div>
 
-            <div className="flex items-center gap-2 justify-end">
+            <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
               <button
                 type="button"
                 onClick={onClose}
                 disabled={guardando}
-                className="h-9 px-4 rounded-xl border border-border bg-surface text-xs font-semibold text-text-muted hover:text-text transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
+                className="h-9 px-4 flex-1 sm:flex-none rounded-xl border border-border bg-surface text-xs font-semibold text-text-muted hover:text-text transition-colors inline-flex items-center justify-center cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
               >
                 Cancelar
               </button>
               <button
                 type="submit"
                 disabled={guardando}
-                className="h-9 px-5 rounded-xl border border-orange-500/40 bg-orange-500/15 hover:bg-orange-500/25 text-orange-600 dark:text-orange-400 font-display font-bold text-xs uppercase active:scale-95 transition-colors disabled:opacity-50 inline-flex items-center justify-center gap-1.5 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
+                className="h-9 px-5 flex-1 sm:flex-none rounded-xl border border-orange-500/40 bg-orange-500/15 hover:bg-orange-500/25 text-orange-600 dark:text-orange-400 font-display font-bold text-xs uppercase active:scale-95 transition-colors disabled:opacity-50 inline-flex items-center justify-center gap-1.5 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 whitespace-nowrap"
               >
                 {guardando ? 'Guardando…' : 'Guardar Cambios'}
               </button>
