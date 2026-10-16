@@ -453,8 +453,7 @@ export default function DetallePartido() {
           <div data-ui="info-banner" className="flex items-center gap-2 px-3 py-2 rounded-xl border border-border bg-page text-xs text-text-muted">
             <span className="w-2 h-2 rounded-full bg-border shrink-0" />
             <span>
-              Este partido registra el marcador final oficial ({partido.equipo_local} {ptsLocal} -{' '}
-              {ptsVisitante} {partido.equipo_visitante}) sin desglose individual cargado en planilla.
+              Marcador oficial sin desglose individual en planilla.
             </span>
           </div>
         ) : null}
