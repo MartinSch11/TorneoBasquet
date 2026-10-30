@@ -11,11 +11,11 @@ export function ToastProvider({ children }) {
   }, [])
 
   const agregarToast = useCallback(
-    ({ tipo = 'success', mensaje, titulo = '', duracion = 4500 }) => {
+    ({ tipo = 'success', mensaje, titulo = '', duracion = 3500 }) => {
       const id = `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`
       const nuevo = { id, tipo, mensaje, titulo }
 
-      setToasts((prev) => [...prev, nuevo])
+      setToasts((prev) => [...prev.slice(-2), nuevo])
 
       if (duracion > 0) {
         setTimeout(() => {
@@ -30,13 +30,13 @@ export function ToastProvider({ children }) {
 
   const toast = {
     success: (mensaje, titulo) =>
-      agregarToast({ tipo: 'success', mensaje, titulo: titulo ?? 'Operación exitosa' }),
+      agregarToast({ tipo: 'success', mensaje, titulo: titulo || '' }),
     error: (mensaje, titulo) =>
-      agregarToast({ tipo: 'error', mensaje, titulo: titulo ?? 'Error' }),
+      agregarToast({ tipo: 'error', mensaje, titulo: titulo || '' }),
     warning: (mensaje, titulo) =>
-      agregarToast({ tipo: 'warning', mensaje, titulo: titulo ?? 'Atención' }),
+      agregarToast({ tipo: 'warning', mensaje, titulo: titulo || '' }),
     info: (mensaje, titulo) =>
-      agregarToast({ tipo: 'info', mensaje, titulo: titulo ?? 'Información' }),
+      agregarToast({ tipo: 'info', mensaje, titulo: titulo || '' }),
     custom: agregarToast,
     dismiss: removerToast,
   }
@@ -48,14 +48,14 @@ export function ToastProvider({ children }) {
         createPortal(
           <div
             data-ui="toast-container"
-            className="fixed top-16 right-4 sm:right-6 z-[999999] flex flex-col gap-2.5 max-w-sm w-full pointer-events-none"
+            className="fixed bottom-4 inset-x-4 sm:bottom-auto sm:top-5 sm:left-auto sm:right-6 sm:w-full z-[999999] flex flex-col-reverse sm:flex-col gap-2 max-w-sm sm:max-w-md mx-auto sm:mx-0 pointer-events-none"
             aria-live="polite"
           >
             {toasts.map((t) => (
               <div
                 key={t.id}
                 data-ui="toast-item"
-                className={`pointer-events-auto rounded-xl border bg-surface p-3.5 shadow-2xl flex items-start gap-3 transition-opacity transition-transform duration-200 animate-in slide-in-from-top-3 fade-in ${
+                className={`pointer-events-auto rounded-xl border bg-surface/95 backdrop-blur-md p-3 sm:p-3.5 shadow-2xl flex items-center sm:items-start gap-3 transition-all duration-200 animate-in slide-in-from-bottom-2 sm:slide-in-from-top-2 fade-in ${
                   t.tipo === 'success'
                     ? 'border-emerald-500/30'
                     : t.tipo === 'error'
@@ -102,7 +102,7 @@ export function ToastProvider({ children }) {
                       {t.titulo}
                     </span>
                   )}
-                  <p className="text-text-muted text-xs leading-relaxed font-sans break-words">
+                  <p className={`text-xs leading-relaxed font-sans break-words ${t.titulo ? 'text-text-muted' : 'text-text font-medium'}`}>
                     {t.mensaje}
                   </p>
                 </div>

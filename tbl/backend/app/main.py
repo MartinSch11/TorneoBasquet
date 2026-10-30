@@ -5,7 +5,7 @@ from app.core.config import get_settings
 from app.core.errors import setup_exception_handlers
 from app.core.logging_config import setup_logging
 from app.core.security_headers import SecurityHeadersMiddleware
-from app.routers import auth, cancha, estadisticas, galeria, inicio, torneo
+from app.routers import auth, cancha, equipo, estadisticas, galeria, inicio, partido, sponsor, torneo
 
 settings = get_settings()
 setup_logging(settings.log_level)
@@ -13,10 +13,13 @@ setup_logging(settings.log_level)
 api = APIRouter(prefix="/api/v1")
 api.include_router(auth.router, prefix="/auth", tags=["auth"])
 api.include_router(torneo.router, tags=["torneo"])
+api.include_router(partido.router, tags=["partidos"])
+api.include_router(equipo.router, tags=["equipos"])
 api.include_router(estadisticas.router, prefix="/estadisticas", tags=["estadisticas"])
 api.include_router(galeria.router, prefix="/galeria", tags=["galeria"])
 api.include_router(inicio.router, tags=["inicio"])
 api.include_router(cancha.router, prefix="/canchas", tags=["canchas"])
+api.include_router(sponsor.router, prefix="/sponsors", tags=["sponsors"])
 
 app = FastAPI(
     title="LBA API",

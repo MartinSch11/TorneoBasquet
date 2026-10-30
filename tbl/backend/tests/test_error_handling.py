@@ -20,6 +20,10 @@ async def trigger_integrity_409():
 
 
 app.include_router(router_errors)
+# Asegurar que cualquier catch-all de SPA permanezca al final de la tabla de rutas
+for ca in [r for r in app.router.routes if getattr(r, "path", None) == "/{full_path:path}"]:
+    app.router.routes.remove(ca)
+    app.router.routes.append(ca)
 
 
 def test_404_not_found_json_response(client):

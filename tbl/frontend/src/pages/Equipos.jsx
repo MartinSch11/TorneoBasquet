@@ -22,7 +22,7 @@ export default function Equipos() {
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h1 className="font-display text-3xl font-bold tracking-tight text-text text-balance">Equipos</h1>
-          <p className="text-sm text-text-muted text-pretty">Elegí un equipo para ver su ficha</p>
+          <p className="text-sm text-text-muted text-pretty">Elegí un equipo para ver su plantel, estadísticas y partidos disputados</p>
         </div>
         <TorneoSelector />
       </div>

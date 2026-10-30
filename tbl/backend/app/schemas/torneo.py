@@ -29,40 +29,14 @@ class PosicionOut(BaseModel):
     puntos: int
 
 
-class ResultadoOut(BaseModel):
-    id: int
-    fase: str
-    fecha_id: int
-    numero_fecha: int | None
-    fecha: str | None
-    horario: str | None
-    cancha: str | None
-    equipo_local: str
-    equipo_visitante: str
-    pts_local: int | None
-    pts_visitante: int | None
-    escudo_local: str | None = None
-    escudo_visitante: str | None = None
-    equipo_local_id: int | None = None
-    equipo_visitante_id: int | None = None
-    jugado: bool | None = None
-    torneo_nombre: str | None = None
-    categoria: str | None = None
-
-
-class ProximoPartidoOut(BaseModel):
-    id: int
-    fase: str
-    numero_fecha: int | None
-    fecha: str | None
-    horario: str | None
-    cancha: str | None
-    equipo_local: str
-    equipo_visitante: str
-    escudo_local: str | None = None
-    escudo_visitante: str | None = None
-    equipo_local_id: int | None = None
-    equipo_visitante_id: int | None = None
+from app.schemas.partido import (
+    EstadisticaPartidoDetalleOut,
+    PartidoCreateIn,
+    PartidoResultadoIn,
+    PartidoUpdateIn,
+    ProximoPartidoOut,
+    ResultadoOut,
+)
 
 
 class GoleadorOut(BaseModel):
@@ -87,6 +61,60 @@ class EquipoListOut(BaseModel):
     categoria: str | None = None
 
 
+class PartidoDisputadoOut(BaseModel):
+    id: int
+    fase: str
+    instancia: str  # "Local" | "Visitante"
+    dia: str | None = None  # "27-10-2026"
+    fecha_numero: int | None = None  # 10
+    versus: str
+    versus_id: int
+    versus_escudo_url: str | None = None
+    resultado: str  # "P 43-46" | "G 51-44"
+    gano: bool
+    pts_local: int | None = None
+    pts_visitante: int | None = None
+    pts_equipo: int | None = None
+    pts_rival: int | None = None
+    cancha: str | None = None
+
+
+class TorneoEquipoOut(BaseModel):
+    id: int
+    nombre: str
+    edicion: int
+    categoria: str
+    grupo: str | None = None
+    temporada: str
+    estado: str
+    etiqueta: str
+
+
+class JugadorFichaOut(BaseModel):
+    id: int
+    nombre: str
+    nombre_pila: str | None = None
+    apellido: str | None = None
+    numero: int | None = None
+    foto_url: str | None = None
+    pj: int = 0
+    pct_1: float = 0.0
+    pct_2: float = 0.0
+    pct_3: float = 0.0
+    ptos: int = 0
+    pp: float = 0.0
+    asistencias: int = 0
+    ro: int = 0
+    rd: int = 0
+    fp: int = 0
+    fr: int = 0
+    pf: float = 0.0
+    recuperos: int = 0
+    perdidas: int = 0
+    bloqueos: int = 0
+    val: float = 0.0
+
+
 class EquipoFichaOut(BaseModel):
     id: int
     nombre: str
@@ -95,7 +123,20 @@ class EquipoFichaOut(BaseModel):
     pj: int
     pg: int
     pp: int
-    jugadores: list[dict]
+    jugadores: list[JugadorFichaOut] | list[dict] = []
+    partidos_disputados: list[PartidoDisputadoOut] = []
+    torneos: list[TorneoEquipoOut] = []
+    torneo_actual_id: int | None = None
+
+
+def validar_url_segura(v: str | None) -> str | None:
+    if v is not None:
+        v_strip = v.strip()
+        v_lower = v_strip.lower()
+        if v_lower.startswith(("javascript:", "data:text/html", "vbscript:")):
+            raise ValueError("URL de escudo no permitida")
+        return v_strip
+    return v
 
 
 class EquipoUpdateIn(BaseModel):
@@ -106,35 +147,8 @@ class EquipoUpdateIn(BaseModel):
     @field_validator("escudo_url")
     @classmethod
     def validar_escudo_url(cls, v: str | None) -> str | None:
-        if v is not None:
-            v_strip = v.strip()
-            v_lower = v_strip.lower()
-            if v_lower.startswith(("javascript:", "data:text/html", "vbscript:")):
-                raise ValueError("URL de escudo no permitida")
-            return v_strip
-        return v
+        return validar_url_segura(v)
 
-
-class PartidoCreateIn(BaseModel):
-    torneo_id: int
-    fecha_numero: int = Field(ge=1)
-    fecha_dia: date | None = None
-    equipo_local_id: int
-    equipo_visitante_id: int
-    fase: str = "FASE REGULAR"
-    cancha: str | None = None
-    horario: time | None = None
-
-
-class PartidoUpdateIn(BaseModel):
-    fecha_numero: int | None = Field(default=None, ge=1)
-    fecha_dia: date | None = None
-    equipo_local_id: int | None = None
-    equipo_visitante_id: int | None = None
-    fase: str | None = None
-    cancha: str | None = None
-    horario: time | None = None
-    jugado: bool | None = None
 
 
 class EquipoCreateIn(BaseModel):
@@ -145,42 +159,27 @@ class EquipoCreateIn(BaseModel):
     @field_validator("escudo_url")
     @classmethod
     def validar_escudo_url(cls, v: str | None) -> str | None:
-        if v is not None:
-            v_strip = v.strip()
-            v_lower = v_strip.lower()
-            if v_lower.startswith(("javascript:", "data:text/html", "vbscript:")):
-                raise ValueError("URL de escudo no permitida")
-            return v_strip
-        return v
+        return validar_url_segura(v)
 
 
 class InscripcionIn(BaseModel):
-    torneo_id: int
+    torneo_id: int | None = None
     equipo_id: int
 
 
-class EstadisticaPartidoDetalleOut(BaseModel):
-    jugador_id: int
-    jugador_nombre: str
-    numero: int | None = None
-    equipo_id: int
-    libres_conv: int = 0
-    libres_int: int = 0
-    dobles_conv: int = 0
-    dobles_int: int = 0
-    triples_conv: int = 0
-    triples_int: int = 0
-    asistencias: int = 0
-    reb_ofensivos: int = 0
-    reb_defensivos: int = 0
-    faltas_personales: int = 0
-    faltas_recibidas: int = 0
-    faltas_tecnicas: int = 0
-    faltas_antideportivas: int = 0
-    perdidas: int = 0
-    bloqueos: int = 0
-    recuperos: int = 0
-    puntos: int = 0
+class CopiarEquiposIn(BaseModel):
+    torneo_origen_id: int
+
+
+class TorneoEquipoEstadoOut(BaseModel):
+    id: int
+    nombre: str
+    escudo_url: str | None = None
+    inscripto: bool = False
+    partidos_jugados: int = 0
+    otra_categoria: str | None = None
+    otro_torneo_id: int | None = None
+
 
 
 class JugadorCreateIn(BaseModel):

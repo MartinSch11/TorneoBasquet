@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useApi } from '../hooks/useApi'
 import { useTorneo } from '../hooks/useTorneo'
@@ -7,20 +8,39 @@ import EscudoEquipo from '../components/ui/EscudoEquipo'
 
 export default function FichaEquipo() {
   const { id } = useParams()
-  const { torneoSeleccionado } = useTorneo()
+  const { torneoSeleccionado, torneos: torneosGlobales, seleccionar } = useTorneo()
+  const [torneoFiltroId, setTorneoFiltroId] = useState(null)
+
+  const activeTorneoId = torneoFiltroId ?? torneoSeleccionado?.id ?? null
+
   const { data, loading, error } = useApi(
     async () => {
-      const res = await api.get(`/equipos/${id}`, {
-        params: torneoSeleccionado ? { torneo_id: torneoSeleccionado.id } : {},
-      })
+      const params = activeTorneoId ? { torneo_id: activeTorneoId } : {}
+      const res = await api.get(`/equipos/${id}`, { params })
       return res.data
     },
-    [id, torneoSeleccionado?.id],
+    [id, activeTorneoId],
   )
 
-  if (loading) return <Spinner />
+  if (loading) return <Spinner label="Cargando ficha del equipo…" />
   if (error) return <p className="mx-auto max-w-6xl px-4 py-6 text-danger">{error}</p>
   if (!data) return null
+
+  const torneosDisponibles =
+    data.torneos && data.torneos.length > 0 ? data.torneos : torneosGlobales || []
+  const torneoActivoId =
+    torneoFiltroId ?? data.torneo_actual_id ?? torneoSeleccionado?.id ?? ''
+
+  const handleTorneoChange = (e) => {
+    const val = e.target.value ? Number(e.target.value) : null
+    setTorneoFiltroId(val)
+    if (val && torneosGlobales) {
+      const match = torneosGlobales.find((t) => t.id === val)
+      if (match) seleccionar(match)
+    }
+  }
+
+  const partidos = data.partidos_disputados || []
 
   return (
     <section className="mx-auto max-w-6xl px-4 py-6">
@@ -30,6 +50,8 @@ export default function FichaEquipo() {
       >
         ‹ Volver a equipos
       </Link>
+
+      {/* Cabecera del Equipo */}
       <header className="flex flex-col items-center gap-5 rounded-2xl border border-border bg-surface p-6 sm:flex-row">
         <EscudoEquipo url={data.escudo_url} nombre={data.nombre} className="h-20 w-20 shrink-0" />
         <div className="text-center sm:text-left">
@@ -40,44 +62,207 @@ export default function FichaEquipo() {
         </div>
       </header>
 
-      <h2 className="mt-6 font-display text-2xl font-bold tracking-tight text-text text-balance">Plantel</h2>
-      <div className="mt-2 overflow-hidden rounded-2xl border border-border bg-surface" data-ui="roster-container">
-        {data.jugadores.length === 0 ? (
-          <p className="px-4 py-8 text-center text-text-muted">Sin jugadores cargados</p>
-        ) : (
-          <table className="w-full text-sm" data-ui="roster-table">
-            <thead className="bg-surface-raised text-left text-xs uppercase font-bold text-text-muted" data-ui="table-head">
-              <tr>
-                <th scope="col" className="w-16 px-4 py-3 text-center">#</th>
-                <th scope="col" className="px-4 py-3">Jugador</th>
-              </tr>
-            </thead>
-            <tbody data-ui="table-body" className="divide-y divide-border/40">
-              {data.jugadores.map((j) => (
-                <tr key={j.id} className="hover:bg-orange-500/10 transition-colors" data-ui="roster-row">
-                  <td className="w-16 px-4 py-3 text-center font-athletic text-base font-bold tabular-nums text-orange-600 dark:text-orange-400">
-                    {j.numero !== null && j.numero !== undefined ? j.numero : '-'}
-                  </td>
-                  <td className="px-4 py-3 font-semibold text-text">
-                    <div className="flex items-center gap-3">
-                      {j.foto_url && (
-                        <img
-                          src={j.foto_url}
-                          alt={`Foto de ${j.nombre}`}
-                          width="40"
-                          height="40"
-                          className="h-10 w-10 rounded-full object-cover shrink-0"
-                          loading="lazy"
-                        />
-                      )}
-                      <span>{j.nombre}</span>
-                    </div>
-                  </td>
-                </tr>
+      {/* Partidos Disputados */}
+      <div className="mt-8">
+        {torneosDisponibles.length > 0 && (
+          <div className="mb-2 flex flex-wrap items-center gap-2 text-xs sm:text-sm font-medium text-text-muted">
+            <span>Mostrando datos del Torneo:</span>
+            <select
+              value={torneoActivoId}
+              onChange={handleTorneoChange}
+              className="rounded-lg border border-border bg-surface px-2.5 py-1 text-xs sm:text-sm font-semibold text-text outline-none focus:border-orange-500 focus-visible:ring-2 focus-visible:ring-orange-500 transition-colors cursor-pointer max-w-full"
+              aria-label="Seleccionar torneo para filtrar partidos"
+            >
+              {torneosDisponibles.map((t) => (
+                <option key={t.id} value={t.id}>
+                  {t.etiqueta || `${t.categoria} ${t.edicion} · ${t.temporada}`}
+                </option>
               ))}
-            </tbody>
-          </table>
+            </select>
+          </div>
         )}
+
+        <h2 className="font-display text-2xl font-bold tracking-tight text-text text-balance">
+          Partidos disputados
+        </h2>
+        <hr className="mt-2 mb-4 border-border/80" />
+
+        <div className="overflow-x-auto rounded-xl border border-border bg-surface shadow-sm">
+          {partidos.length === 0 ? (
+            <p className="px-4 py-8 text-center text-text-muted text-sm">
+              Sin partidos disputados en este torneo
+            </p>
+          ) : (
+            <table className="w-full text-left text-sm border-collapse">
+              <thead className="bg-gradient-to-r from-orange-600 via-orange-500 to-amber-600 text-white font-bold text-xs uppercase tracking-wider">
+                <tr>
+                  <th scope="col" className="px-4 py-3">Fase</th>
+                  <th scope="col" className="px-3 py-3">Instancia</th>
+                  <th scope="col" className="px-3 py-3 text-center">Dia</th>
+                  <th scope="col" className="px-3 py-3 text-center">Fecha</th>
+                  <th scope="col" className="px-4 py-3">Versus</th>
+                  <th scope="col" className="px-4 py-3 text-center">Resultado</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border/40">
+                {partidos.map((p) => (
+                  <tr
+                    key={p.id}
+                    className="hover:bg-orange-500/10 transition-colors"
+                  >
+                    <td className="px-4 py-3 font-semibold uppercase text-xs text-text-muted whitespace-nowrap">
+                      {p.fase}
+                    </td>
+                    <td className="px-3 py-3 font-medium text-text whitespace-nowrap">
+                      {p.instancia}
+                    </td>
+                    <td className="px-3 py-3 text-center font-medium tabular-nums text-text-muted whitespace-nowrap">
+                      {p.dia || '-'}
+                    </td>
+                    <td className="px-3 py-3 text-center font-bold tabular-nums text-text whitespace-nowrap">
+                      {p.fecha_numero ?? '-'}
+                    </td>
+                    <td className="px-4 py-3 font-bold uppercase text-text">
+                      <div className="flex items-center gap-2 min-w-0">
+                        {p.versus_escudo_url && (
+                          <img
+                            src={p.versus_escudo_url}
+                            alt=""
+                            className="h-5 w-5 object-contain shrink-0"
+                            loading="lazy"
+                          />
+                        )}
+                        <span className="truncate">{p.versus}</span>
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 text-center whitespace-nowrap">
+                      <Link
+                        to={`/partidos/${p.id}`}
+                        className="inline-flex items-center gap-1 font-bold underline decoration-2 decoration-orange-500/60 hover:text-orange-500 transition-colors"
+                        title="Ver detalle del partido"
+                      >
+                        <span
+                          className={
+                            p.gano
+                              ? 'text-emerald-600 dark:text-emerald-400 font-extrabold'
+                              : 'text-red-500 dark:text-red-400 font-extrabold'
+                          }
+                        >
+                          {p.gano ? 'G' : 'P'}
+                        </span>
+                        <span className="text-text tabular-nums">{p.pts_local}-{p.pts_visitante}</span>
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+      </div>
+
+      {/* Jugadores y Estadísticas */}
+      <div className="mt-8">
+        <h2 className="font-display text-2xl font-bold tracking-tight text-text text-balance">
+          Jugadores
+        </h2>
+        <hr className="mt-2 mb-4 border-border/80" />
+
+        <div className="overflow-x-auto rounded-xl border border-border bg-surface shadow-sm">
+          {data.jugadores.length === 0 ? (
+            <p className="px-4 py-8 text-center text-text-muted text-sm">
+              Sin jugadores cargados
+            </p>
+          ) : (
+            <table className="w-full text-left text-sm border-collapse">
+              <thead className="bg-gradient-to-r from-orange-600 via-orange-500 to-amber-600 text-white font-bold text-xs uppercase tracking-wider">
+                <tr>
+                  <th scope="col" className="w-12 px-2.5 py-3 text-center">#</th>
+                  <th scope="col" className="px-4 py-3">Nombre</th>
+                  <th scope="col" className="px-2.5 py-3 text-center">PJ</th>
+                  <th scope="col" className="px-2.5 py-3 text-center">1%</th>
+                  <th scope="col" className="px-2.5 py-3 text-center">2%</th>
+                  <th scope="col" className="px-2.5 py-3 text-center">3%</th>
+                  <th scope="col" className="px-2.5 py-3 text-center">Ptos</th>
+                  <th scope="col" className="px-2.5 py-3 text-center">PP</th>
+                  <th scope="col" className="px-2.5 py-3 text-center">As</th>
+                  <th scope="col" className="px-2.5 py-3 text-center">RO</th>
+                  <th scope="col" className="px-2.5 py-3 text-center">RD</th>
+                  <th scope="col" className="px-2.5 py-3 text-center">FP</th>
+                  <th scope="col" className="px-2.5 py-3 text-center">FR</th>
+                  <th scope="col" className="px-2.5 py-3 text-center">PF</th>
+                  <th scope="col" className="px-2.5 py-3 text-center">Re</th>
+                  <th scope="col" className="px-2.5 py-3 text-center">Pe</th>
+                  <th scope="col" className="px-2.5 py-3 text-center">Bl</th>
+                  <th scope="col" className="px-3 py-3 text-center">Val</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border/40">
+                {data.jugadores.map((j) => (
+                  <tr
+                    key={j.id}
+                    className="hover:bg-orange-500/10 transition-colors"
+                  >
+                    <td className="w-12 px-2.5 py-3 text-center font-athletic text-base font-bold tabular-nums text-orange-600 dark:text-orange-400 whitespace-nowrap">
+                      {j.numero !== null && j.numero !== undefined ? j.numero : '-'}
+                    </td>
+                    <td className="px-4 py-3 font-semibold uppercase text-text whitespace-nowrap">
+                      {j.nombre}
+                    </td>
+                    <td className="px-2.5 py-3 text-center tabular-nums text-text font-medium whitespace-nowrap">
+                      {j.pj ?? 0}
+                    </td>
+                    <td className="px-2.5 py-3 text-center tabular-nums text-text-muted text-xs font-medium whitespace-nowrap">
+                      {(j.pct_1 ?? 0).toFixed(2)}
+                    </td>
+                    <td className="px-2.5 py-3 text-center tabular-nums text-text-muted text-xs font-medium whitespace-nowrap">
+                      {(j.pct_2 ?? 0).toFixed(2)}
+                    </td>
+                    <td className="px-2.5 py-3 text-center tabular-nums text-text-muted text-xs font-medium whitespace-nowrap">
+                      {(j.pct_3 ?? 0).toFixed(2)}
+                    </td>
+                    <td className="px-2.5 py-3 text-center tabular-nums text-text font-bold text-sm whitespace-nowrap">
+                      {j.ptos ?? 0}
+                    </td>
+                    <td className="px-2.5 py-3 text-center tabular-nums text-text font-medium text-xs whitespace-nowrap">
+                      {(j.pp ?? 0).toFixed(2)}
+                    </td>
+                    <td className="px-2.5 py-3 text-center tabular-nums text-text font-medium text-xs whitespace-nowrap">
+                      {j.asistencias ?? 0}
+                    </td>
+                    <td className="px-2.5 py-3 text-center tabular-nums text-text-muted text-xs whitespace-nowrap">
+                      {j.ro ?? 0}
+                    </td>
+                    <td className="px-2.5 py-3 text-center tabular-nums text-text-muted text-xs whitespace-nowrap">
+                      {j.rd ?? 0}
+                    </td>
+                    <td className="px-2.5 py-3 text-center tabular-nums text-text-muted text-xs whitespace-nowrap">
+                      {j.fp ?? 0}
+                    </td>
+                    <td className="px-2.5 py-3 text-center tabular-nums text-text-muted text-xs whitespace-nowrap">
+                      {j.fr ?? 0}
+                    </td>
+                    <td className="px-2.5 py-3 text-center tabular-nums text-text-muted text-xs whitespace-nowrap">
+                      {(j.pf ?? 0).toFixed(2)}
+                    </td>
+                    <td className="px-2.5 py-3 text-center tabular-nums text-text font-medium text-xs whitespace-nowrap">
+                      {j.recuperos ?? 0}
+                    </td>
+                    <td className="px-2.5 py-3 text-center tabular-nums text-text-muted text-xs whitespace-nowrap">
+                      {j.perdidas ?? 0}
+                    </td>
+                    <td className="px-2.5 py-3 text-center tabular-nums text-text-muted text-xs whitespace-nowrap">
+                      {j.bloqueos ?? 0}
+                    </td>
+                    <td className="px-3 py-3 text-center tabular-nums font-bold text-xs text-text whitespace-nowrap">
+                      {(j.val ?? 0).toFixed(2)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
       </div>
     </section>
   )

@@ -1,29 +1,13 @@
-from fastapi import APIRouter, Depends, HTTPException, status
-from pydantic import BaseModel
+from fastapi import APIRouter, Depends
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import aliased
 
-from app.core.deps import get_db, require_roles
-from app.models import Equipo, Fecha, Foto, Partido, Sponsor, Torneo, Usuario
+from app.core.deps import get_db
+from app.models import Foto, Sponsor, Torneo
 from app.schemas.inicio import InicioOut
-from app.schemas.sponsor import SponsorCreate, SponsorOut, SponsorUpdate
 from app.services.estadisticas import estadisticas_por_jugador
+from app.services.partidos import listar_partidos_con_equipos, normalizar_fase
 from app.services.posiciones import calcular_posiciones
-
-
-class SponsorOrdenIn(BaseModel):
-    orden: list[int]
-
-
-def normalizar_fase(fase: str | None) -> str:
-    if not fase:
-        return "FASE REGULAR"
-    f = fase.strip().upper()
-    if "PROMOCION" in f or "DESCENSO" in f:
-        return "PROMOCIÓN"
-    return fase
-
 
 router = APIRouter()
 
@@ -60,138 +44,18 @@ async def inicio(db: AsyncSession = Depends(get_db)) -> dict:
 
     for t in torneos_activos:
         lista_pos_t = await calcular_posiciones(db, t.id)
-        pos_top_t = [
-            {
-                "posicion": i + 1,
-                "equipo_id": p.equipo_id,
-                "equipo": p.equipo,
-                "escudo_url": p.escudo_url,
-                "pj": p.pj,
-                "pg": p.pg,
-                "pp": p.pp,
-                "puntos_favor": p.puntos_favor,
-                "puntos_contra": p.puntos_contra,
-                "dgo": p.dgo,
-                "porcentaje": p.porcentaje,
-                "puntos": p.puntos,
-            }
-            for i, p in enumerate(lista_pos_t[:5])
-        ]
+        pos_top_t = [p.to_dict(i + 1) for i, p in enumerate(lista_pos_t[:5])]
         posiciones_categorias.append({"torneo": t, "posiciones": pos_top_t})
 
     if torneo:
-        el = aliased(Equipo)
-        ev = aliased(Equipo)
-
-        # Últimos partidos disputados
-        q_ult = (
-            select(
-                Partido.id,
-                Partido.fase,
-                Fecha.id.label("fecha_id"),
-                Fecha.numero.label("numero_fecha"),
-                Fecha.fecha,
-                Partido.horario,
-                Partido.cancha,
-                el.nombre.label("equipo_local"),
-                ev.nombre.label("equipo_visitante"),
-                el.escudo_url.label("escudo_local"),
-                ev.escudo_url.label("escudo_visitante"),
-                Partido.pts_local,
-                Partido.pts_visitante,
-                Partido.equipo_local_id,
-                Partido.equipo_visitante_id,
-            )
-            .join(Fecha, Fecha.id == Partido.fecha_id)
-            .join(el, el.id == Partido.equipo_local_id)
-            .join(ev, ev.id == Partido.equipo_visitante_id)
-            .where(Partido.torneo_id == torneo.id, Partido.jugado.is_(True))
-            .order_by(Fecha.fecha.desc(), Partido.id.desc())
-            .limit(6)
+        ultimos_partidos = await listar_partidos_con_equipos(
+            db, torneo_id=torneo.id, jugado=True, limit=6, orden_asc=False, con_normalizacion=True
         )
-        rows_ult = (await db.execute(q_ult)).all()
-        ultimos_partidos = [
-            {
-                "id": r.id,
-                "fase": normalizar_fase(r.fase),
-                "fecha_id": r.fecha_id,
-                "numero_fecha": r.numero_fecha,
-                "fecha": str(r.fecha) if r.fecha else None,
-                "horario": str(r.horario) if r.horario else None,
-                "cancha": r.cancha,
-                "equipo_local": r.equipo_local,
-                "equipo_visitante": r.equipo_visitante,
-                "escudo_local": r.escudo_local,
-                "escudo_visitante": r.escudo_visitante,
-                "pts_local": r.pts_local,
-                "pts_visitante": r.pts_visitante,
-                "equipo_local_id": r.equipo_local_id,
-                "equipo_visitante_id": r.equipo_visitante_id,
-            }
-            for r in rows_ult
-        ]
-
-        # Próximos partidos
-        q_prox = (
-            select(
-                Partido.id,
-                Partido.fase,
-                Fecha.numero.label("numero_fecha"),
-                Fecha.fecha,
-                Partido.horario,
-                Partido.cancha,
-                el.nombre.label("equipo_local"),
-                ev.nombre.label("equipo_visitante"),
-                el.escudo_url.label("escudo_local"),
-                ev.escudo_url.label("escudo_visitante"),
-                Partido.equipo_local_id,
-                Partido.equipo_visitante_id,
-            )
-            .join(Fecha, Fecha.id == Partido.fecha_id)
-            .join(el, el.id == Partido.equipo_local_id)
-            .join(ev, ev.id == Partido.equipo_visitante_id)
-            .where(Partido.torneo_id == torneo.id, Partido.jugado.is_(False))
-            .order_by(Fecha.fecha.asc().nulls_last(), Partido.id.asc())
-            .limit(4)
+        proximos_partidos = await listar_partidos_con_equipos(
+            db, torneo_id=torneo.id, jugado=False, limit=4, orden_asc=True, con_normalizacion=True
         )
-        rows_prox = (await db.execute(q_prox)).all()
-        proximos_partidos = [
-            {
-                "id": r.id,
-                "fase": normalizar_fase(r.fase),
-                "numero_fecha": r.numero_fecha,
-                "fecha": str(r.fecha) if r.fecha else None,
-                "horario": str(r.horario) if r.horario else None,
-                "cancha": r.cancha,
-                "equipo_local": r.equipo_local,
-                "equipo_visitante": r.equipo_visitante,
-                "escudo_local": r.escudo_local,
-                "escudo_visitante": r.escudo_visitante,
-                "equipo_local_id": r.equipo_local_id,
-                "equipo_visitante_id": r.equipo_visitante_id,
-            }
-            for r in rows_prox
-        ]
+        top_posiciones = posiciones_categorias[0]["posiciones"] if posiciones_categorias else []
 
-        # Top 5 Posiciones
-        lista_pos = await calcular_posiciones(db, torneo.id)
-        top_posiciones = [
-            {
-                "posicion": i + 1,
-                "equipo_id": p.equipo_id,
-                "equipo": p.equipo,
-                "escudo_url": p.escudo_url,
-                "pj": p.pj,
-                "pg": p.pg,
-                "pp": p.pp,
-                "puntos_favor": p.puntos_favor,
-                "puntos_contra": p.puntos_contra,
-                "dgo": p.dgo,
-                "porcentaje": p.porcentaje,
-                "puntos": p.puntos,
-            }
-            for i, p in enumerate(lista_pos[:5])
-        ]
 
         # Top 3 Goleadores
         gols = await estadisticas_por_jugador(db, torneo.id, metrica="puntos")
@@ -239,72 +103,3 @@ async def inicio(db: AsyncSession = Depends(get_db)) -> dict:
         "posiciones_categorias": posiciones_categorias,
         "top_goleadores": top_goleadores,
     }
-
-
-@router.get("/sponsors", response_model=list[SponsorOut])
-async def listar_sponsors(
-    db: AsyncSession = Depends(get_db), todos: bool = False
-) -> list[Sponsor]:
-    query = select(Sponsor).order_by(Sponsor.orden.asc(), Sponsor.id.asc())
-    if not todos:
-        query = query.where(Sponsor.activo.is_(True))
-    row = await db.execute(query)
-    return list(row.scalars().all())
-
-
-@router.post("/sponsors", response_model=SponsorOut, status_code=status.HTTP_201_CREATED)
-async def crear_sponsor(
-    body: SponsorCreate,
-    db: AsyncSession = Depends(get_db),
-    _: Usuario = Depends(require_roles("admin")),
-) -> Sponsor:
-    sponsor = Sponsor(**body.model_dump())
-    db.add(sponsor)
-    await db.commit()
-    await db.refresh(sponsor)
-    return sponsor
-
-
-@router.patch("/sponsors/{sponsor_id}", response_model=SponsorOut)
-async def actualizar_sponsor(
-    sponsor_id: int,
-    body: SponsorUpdate,
-    db: AsyncSession = Depends(get_db),
-    _: Usuario = Depends(require_roles("admin")),
-) -> Sponsor:
-    sponsor = await db.get(Sponsor, sponsor_id)
-    if sponsor is None:
-        raise HTTPException(status_code=404, detail="Sponsor no encontrado")
-    for campo, valor in body.model_dump(exclude_unset=True).items():
-        setattr(sponsor, campo, valor)
-    await db.commit()
-    await db.refresh(sponsor)
-    return sponsor
-
-
-@router.put("/sponsors/orden")
-async def reordenar_sponsors(
-    body: SponsorOrdenIn,
-    db: AsyncSession = Depends(get_db),
-    _: Usuario = Depends(require_roles("admin")),
-) -> dict:
-    for pos, sponsor_id in enumerate(body.orden):
-        sponsor = await db.get(Sponsor, sponsor_id)
-        if sponsor is not None:
-            sponsor.orden = pos
-    await db.commit()
-    return {"ok": True}
-
-
-@router.delete("/sponsors/{sponsor_id}")
-async def eliminar_sponsor(
-    sponsor_id: int,
-    db: AsyncSession = Depends(get_db),
-    _: Usuario = Depends(require_roles("admin")),
-) -> dict:
-    sponsor = await db.get(Sponsor, sponsor_id)
-    if sponsor is None:
-        raise HTTPException(status_code=404, detail="Sponsor no encontrado")
-    await db.delete(sponsor)
-    await db.commit()
-    return {"ok": True}

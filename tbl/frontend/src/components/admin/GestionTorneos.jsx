@@ -4,8 +4,9 @@ import Spinner from '../ui/Spinner'
 import { useToast } from '../../context/ToastContext'
 import ModalCrearTorneo from './ModalCrearTorneo'
 import ModalFinalizarTorneo from './ModalFinalizarTorneo'
+import ModalEquiposTorneo from './ModalEquiposTorneo'
 import MenuAcciones from '../ui/MenuAcciones'
-import { IconEdit, IconCheck, IconPlay, IconTrash } from '../ui/Icon'
+import { IconEdit, IconCheck, IconPlay, IconTrash, IconUser } from '../ui/Icon'
 
 export default function GestionTorneos() {
   const { toast } = useToast()
@@ -16,6 +17,7 @@ export default function GestionTorneos() {
   const [modalAbierto, setModalAbierto] = useState(false)
   const [torneoAEditar, setTorneoAEditar] = useState(null)
   const [torneoAFinalizar, setTorneoAFinalizar] = useState(null)
+  const [torneoParaEquipos, setTorneoParaEquipos] = useState(null)
   const [procesandoId, setProcesandoId] = useState(null)
 
   const cargarTorneos = async () => {
@@ -276,6 +278,11 @@ export default function GestionTorneos() {
                               icon: <IconEdit className="w-3.5 h-3.5 text-text-muted" />,
                               onClick: () => handleAbrirEditar(t),
                             },
+                            {
+                              label: 'Equipos participantes',
+                              icon: <IconUser className="w-3.5 h-3.5 text-orange-500" />,
+                              onClick: () => setTorneoParaEquipos(t),
+                            },
                             ...(t.estado === 'activo'
                               ? [
                                   {
@@ -319,6 +326,11 @@ export default function GestionTorneos() {
         isOpen={modalAbierto}
         onClose={() => setModalAbierto(false)}
         torneoAEditar={torneoAEditar}
+        torneosExistentes={torneos}
+        onTorneoCreado={() => {
+          toast.success('Torneo creado exitosamente.')
+          cargarTorneos()
+        }}
         onTorneoGuardado={() => {
           toast.success(torneoAEditar ? 'Torneo actualizado exitosamente.' : 'Torneo creado exitosamente.')
           cargarTorneos()
@@ -332,6 +344,17 @@ export default function GestionTorneos() {
         onClose={() => setTorneoAFinalizar(null)}
         onConfirmar={async (torneo) => {
           await handleToggleEstado(torneo, 'finalizado')
+        }}
+      />
+
+      {/* Modal Equipos Participantes del Torneo */}
+      <ModalEquiposTorneo
+        isOpen={Boolean(torneoParaEquipos)}
+        torneo={torneoParaEquipos}
+        torneosDisponibles={torneos}
+        onClose={() => setTorneoParaEquipos(null)}
+        onEquiposActualizados={() => {
+          cargarTorneos()
         }}
       />
     </div>

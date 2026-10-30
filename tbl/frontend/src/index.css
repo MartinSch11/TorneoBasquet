@@ -146,15 +146,3 @@ body.modal-open {
 .animate-marquee:hover {
   animation-play-state: paused;
 }
-
-/* Swiper Hero Pagination */
-.swiper-pagination-bullet {
-  background: rgba(255, 255, 255, 0.4) !important;
-  opacity: 1 !important;
-  transition: width 0.3s ease, background-color 0.3s ease;
-}
-.swiper-pagination-bullet-active {
-  background: rgb(245, 158, 11) !important;
-  width: 24px !important;
-  border-radius: 4px !important;
-}

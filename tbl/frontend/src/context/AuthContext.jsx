@@ -24,8 +24,6 @@ export function AuthProvider({ children }) {
     const perfil = { usuario, rol }
     localStorage.setItem(TOKEN_KEY, access_token)
     localStorage.setItem(USER_KEY, JSON.stringify(perfil))
-    sessionStorage.setItem(TOKEN_KEY, access_token)
-    sessionStorage.setItem(USER_KEY, JSON.stringify(perfil))
     setUser(perfil)
     return perfil
   }, [])
@@ -40,9 +38,7 @@ export function AuthProvider({ children }) {
 
   const setUsuario = useCallback((next) => {
     setUser(next)
-    const json = JSON.stringify(next)
-    localStorage.setItem(USER_KEY, json)
-    sessionStorage.setItem(USER_KEY, json)
+    localStorage.setItem(USER_KEY, JSON.stringify(next))
   }, [])
 
   return (

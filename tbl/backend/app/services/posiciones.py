@@ -37,6 +37,22 @@ class Posicion:
     def dgo(self) -> int:
         return self.puntos_favor - self.puntos_contra
 
+    def to_dict(self, pos: int) -> dict:
+        return {
+            "posicion": pos,
+            "equipo_id": self.equipo_id,
+            "equipo": self.equipo,
+            "escudo_url": self.escudo_url,
+            "pj": self.pj,
+            "pg": self.pg,
+            "pp": self.pp,
+            "puntos_favor": self.puntos_favor,
+            "puntos_contra": self.puntos_contra,
+            "dgo": self.dgo,
+            "porcentaje": self.porcentaje,
+            "puntos": self.puntos,
+        }
+
 
 def aplicar_resultado(p: Posicion, es_local: bool, pf: int, pc: int) -> None:
     p.pj += 1
@@ -76,24 +92,6 @@ async def calcular_posiciones(db: AsyncSession, torneo_id: int) -> list[Posicion
 
     return ordenar_posiciones(list(posiciones.values()), partidos_jugados)
 
-
-def _resultado_directo(
-    a: Posicion, b: Posicion, partidos: list[Partido]
-) -> int | None:
-    for p in partidos:
-        dupla_local = (p.equipo_local_id, p.equipo_visitante_id)
-        dupla_visita = (p.equipo_visitante_id, p.equipo_local_id)
-        if dupla_local == (a.equipo_id, b.equipo_id):
-            if (p.pts_local or 0) > (p.pts_visitante or 0):
-                return 1
-            if (p.pts_local or 0) < (p.pts_visitante or 0):
-                return -1
-        if dupla_visita == (a.equipo_id, b.equipo_id):
-            if (p.pts_visitante or 0) > (p.pts_local or 0):
-                return 1
-            if (p.pts_visitante or 0) < (p.pts_local or 0):
-                return -1
-    return None
 
 
 def _ordenar_empate_grupo(

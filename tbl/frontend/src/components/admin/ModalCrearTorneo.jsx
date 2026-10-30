@@ -10,6 +10,7 @@ export default function ModalCrearTorneo({
   onTorneoCreado,
   onTorneoGuardado,
   torneoAEditar = null,
+  torneosExistentes = [],
 }) {
   useBodyLock(isOpen)
   const [nombre, setNombre] = useState('LBA')
@@ -18,6 +19,7 @@ export default function ModalCrearTorneo({
   const [edicion, setEdicion] = useState('1')
   const [grupo, setGrupo] = useState('')
   const [estado, setEstado] = useState('activo')
+  const [torneoACopiarId, setTorneoACopiarId] = useState('')
   const [guardando, setGuardando] = useState(false)
   const [error, setError] = useState('')
 
@@ -37,6 +39,7 @@ export default function ModalCrearTorneo({
         setEdicion('1')
         setGrupo('')
         setEstado('activo')
+        setTorneoACopiarId('')
       }
       setError('')
       setGuardando(false)
@@ -93,16 +96,22 @@ export default function ModalCrearTorneo({
         res = await api.patch(`/torneos/${torneoAEditar.id}`, payload)
       } else {
         res = await api.post('/torneos', payload)
+        if (torneoACopiarId) {
+          try {
+            await api.post(`/torneos/${res.data.id}/copiar-equipos`, {
+              torneo_origen_id: parseInt(torneoACopiarId, 10),
+            })
+          } catch (copyErr) {
+            console.error('Error al copiar equipos en nuevo torneo', copyErr)
+          }
+        }
       }
 
-      if (torneoAEditar) {
-        if (onTorneoGuardado) {
-          onTorneoGuardado(res.data)
-        }
-      } else {
-        if (onTorneoCreado) {
-          onTorneoCreado(res.data)
-        }
+      if (onTorneoGuardado) {
+        onTorneoGuardado(res.data)
+      }
+      if (!torneoAEditar && onTorneoCreado) {
+        onTorneoCreado(res.data)
       }
       onClose?.()
     } catch (err) {
@@ -269,6 +278,30 @@ export default function ModalCrearTorneo({
               className="h-10 rounded-xl border border-border bg-page px-3 text-sm text-text outline-none focus:border-orange-500 focus-visible:ring-2 focus-visible:ring-orange-500 transition-colors"
             />
           </div>
+
+          {/* Copiar equipos de otro torneo (solo al crear) */}
+          {!torneoAEditar && torneosExistentes?.length > 0 && (
+            <div className="flex flex-col gap-1.5 p-3 rounded-xl border border-border/80 bg-base">
+              <label className="text-[11px] font-bold uppercase tracking-wider text-text-muted">
+                Copiar equipos de otro torneo (Opcional)
+              </label>
+              <select
+                value={torneoACopiarId}
+                onChange={(e) => setTorneoACopiarId(e.target.value)}
+                className="h-10 rounded-xl border border-border bg-page px-3 text-xs font-semibold text-text outline-none focus:border-orange-500 focus-visible:ring-2 focus-visible:ring-orange-500 transition-colors"
+              >
+                <option value="">No copiar (inscribir manualmente luego)</option>
+                {torneosExistentes.map((t) => (
+                  <option key={t.id} value={t.id}>
+                    {t.nombre} - {t.categoria} ({t.temporada})
+                  </option>
+                ))}
+              </select>
+              <p className="text-[11px] text-text-muted">
+                Inscribe automáticamente todos los clubes de ese torneo al crearse.
+              </p>
+            </div>
+          )}
 
           {/* Botones de acción */}
           <div data-ui="modal-footer" className="mt-2 flex items-center justify-end gap-2.5 pt-3 border-t border-border">
