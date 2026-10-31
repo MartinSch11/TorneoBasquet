@@ -421,7 +421,7 @@ export default function DetallePartido() {
             <div className="flex items-center gap-2.5 min-w-0">
               <span className="w-2.5 h-2.5 rounded-full bg-orange-500 shrink-0" />
               <div className="min-w-0">
-                <span className="block text-[10px] sm:text-xs font-bold uppercase tracking-wider text-orange-600 dark:text-orange-400">
+                <span className="block text-xs font-bold text-orange-600 dark:text-orange-400">
                   Máximo anotador del partido
                 </span>
                 <div className="flex items-center gap-1.5 min-w-0">
@@ -460,12 +460,12 @@ export default function DetallePartido() {
 
         {/* TABLA DE JUGADORES (Box Score de solo lectura) */}
         <div data-ui="admin-table" className="border border-border rounded-xl bg-page overflow-hidden flex flex-col">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse tabular-nums text-xs">
-              <thead data-ui="table-head" className="bg-surface border-b border-border text-[10px] font-bold uppercase tracking-wider text-text-muted">
+          <div className="overflow-x-auto no-scrollbar">
+            <table data-ui="data-table" className="w-full text-left border-collapse tabular-nums text-xs min-w-[560px]">
+              <thead data-ui="table-head" className="bg-surface border-b border-border text-[11px] font-bold uppercase tracking-wider text-text-muted">
                 <tr>
-                  <th className="py-2.5 px-2 w-12 text-center font-bold text-text-muted">#</th>
-                  <th className="py-2.5 px-3 font-sans min-w-[160px] font-bold text-text-muted">
+                  <th className="sticky left-0 z-20 bg-surface w-10 min-w-[36px] max-w-[36px] py-2.5 px-2 text-center font-bold text-text-muted">#</th>
+                  <th data-ui="sticky-col" className="sticky left-[36px] z-20 bg-surface border-r border-border py-2.5 px-3 font-sans min-w-[120px] max-w-[150px] sm:max-w-none font-bold text-text-muted truncate">
                     Jugador ({equipoNombreActual})
                   </th>
                   <th
@@ -538,10 +538,10 @@ export default function DetallePartido() {
 
                     return (
                       <tr key={j.id} className="hover:bg-surface/60 transition-colors">
-                        <td className="py-2 px-2 text-center tabular-nums text-xs font-semibold text-text-muted">
+                        <td className="sticky left-0 z-10 bg-page w-10 min-w-[36px] max-w-[36px] py-2 px-2 text-center tabular-nums text-xs font-athletic font-bold text-orange-600 dark:text-orange-400 whitespace-nowrap">
                           {j.numero !== null && j.numero !== undefined ? j.numero : '-'}
                         </td>
-                        <td className="py-2 px-3 font-sans font-semibold text-text truncate max-w-[200px]">
+                        <td data-ui="sticky-col" className="sticky left-[36px] z-10 bg-page border-r border-border py-2 px-3 font-sans font-semibold text-text max-w-[120px] sm:max-w-none truncate whitespace-nowrap">
                           {j.nombre}
                         </td>
 
@@ -620,9 +620,10 @@ export default function DetallePartido() {
                 <tr>
                   <td
                     colSpan="2"
-                    className="py-2.5 px-3 text-right font-display uppercase tracking-wider text-text"
+                    data-ui="sticky-col"
+                    className="sticky left-0 z-10 bg-surface border-r border-border py-2.5 px-3 text-right font-display uppercase tracking-wide text-text" /* data-ui */
                   >
-                    Totales de {equipoNombreActual}:
+                    Totales ({equipoNombreActual}):
                   </td>
                   <td className="py-2.5 px-1.5 text-center text-text font-bold bg-orange-500/5">
                     {totalesEquipo.p1}

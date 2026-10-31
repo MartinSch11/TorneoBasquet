@@ -5,6 +5,7 @@ import { useTorneo } from '../hooks/useTorneo'
 import api from '../services/api'
 import Spinner from '../components/ui/Spinner'
 import EscudoEquipo from '../components/ui/EscudoEquipo'
+import TarjetaPartido from '../components/torneo/TarjetaPartido'
 import { formatFecha, formatHorario } from '../utils/formatFecha'
 
 function formatFase(fase) {
@@ -67,88 +68,6 @@ function TickerItemFiba({ partido }) {
           {jugado ? ptsVisita : '-'}
         </span>
       </div>
-    </Wrapper>
-  )
-}
-
-function PartidoScorecard({ partido, jugado = true }) {
-  const ptsLocal = partido.pts_local ?? 0
-  const ptsVisita = partido.pts_visitante ?? 0
-  const tienePuntos = partido.pts_local !== null && partido.pts_visitante !== null
-  const localGano = jugado && tienePuntos && ptsLocal > ptsVisita
-  const visitGano = jugado && tienePuntos && ptsVisita > ptsLocal
-  const fechaStr = formatFecha(partido.fecha)
-  const horaStr = partido.horario ? formatHorario(partido.horario) : null
-
-  const Wrapper = jugado && partido.id ? Link : 'article'
-
-  return (
-    <Wrapper
-      to={jugado && partido.id ? `/partidos/${partido.id}` : undefined}
-      data-ui="match-card"
-      className="group block rounded-xl border border-border bg-surface p-4 transition-colors duration-150 hover:border-orange-500/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
-    >
-      <div className="flex items-center justify-between pb-2 text-sm font-medium text-text-muted">
-        <span className="font-semibold text-text">{formatFase(partido.fase)}</span>
-        <div className="flex items-center gap-1.5 tabular-nums text-sm">
-          {fechaStr && <span>{fechaStr}</span>}
-          {horaStr && <span className="font-semibold text-orange-600 dark:text-orange-400">· {horaStr} hs</span>}
-        </div>
-      </div>
-
-      <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3 py-2">
-        {/* Local */}
-        <div className="flex items-center gap-2.5 min-w-0">
-          <EscudoEquipo url={partido.escudo_local} nombre={partido.equipo_local} className="w-10 h-10 shrink-0" />
-          <div className="min-w-0">
-            <span className="block text-xs font-semibold text-text-muted">Local</span>
-            <span className={`block truncate text-sm sm:text-lg ${localGano ? 'font-bold text-text' : 'font-medium text-text-muted'}`}>
-              {partido.equipo_local}
-            </span>
-          </div>
-        </div>
-
-        {/* Tablero central */}
-        <div className="flex flex-col items-center justify-center px-2 shrink-0">
-          {jugado && tienePuntos ? (
-            <div className="flex items-center gap-2 font-athletic text-2xl sm:text-3xl font-bold tabular-nums">
-              <span className={localGano ? 'text-orange-600 dark:text-orange-400' : 'text-text-muted'}>
-                {ptsLocal}
-              </span>
-              <span className="text-text-muted font-light">-</span>
-              <span className={visitGano ? 'text-orange-600 dark:text-orange-400' : 'text-text-muted'}>
-                {ptsVisita}
-              </span>
-            </div>
-          ) : (
-            <div className="px-3 py-1 rounded bg-orange-600/15 text-orange-600 dark:text-orange-400 font-athletic font-bold text-sm tracking-widest">
-              VS
-            </div>
-          )}
-        </div>
-
-        {/* Visitante */}
-        <div className="flex items-center justify-end gap-2.5 min-w-0 text-right">
-          <div className="min-w-0">
-            <span className="block text-xs font-semibold text-text-muted">Visita</span>
-            <span className={`block truncate text-sm sm:text-lg ${visitGano ? 'font-bold text-text' : 'font-medium text-text-muted'}`}>
-              {partido.equipo_visitante}
-            </span>
-          </div>
-          <EscudoEquipo url={partido.escudo_visitante} nombre={partido.equipo_visitante} className="w-10 h-10 shrink-0" />
-        </div>
-      </div>
-
-      {(partido.cancha || jugado) && (
-        <div className="pt-2 text-xs text-text-muted flex items-center justify-between gap-2">
-          <span className="truncate">{partido.cancha ? `Cancha: ${partido.cancha}` : 'Finalizado'}</span>
-          {jugado && (
-            <span className="font-bold text-orange-600 dark:text-orange-400 group-hover:underline shrink-0">
-              Ver planilla ›
-            </span>
-          )}
-        </div>
-      )}
     </Wrapper>
   )
 }
@@ -275,17 +194,22 @@ export default function InicioNuevo() {
 
         {/* Selector de diapositivas en hero si hay fotos */}
         {fotos.length > 1 && (
-          <nav aria-label="Fotos destacadas" className="relative z-10 mx-auto max-w-6xl px-4 pb-6 flex items-center gap-2">
+          <nav aria-label="Fotos destacadas" className="relative z-10 mx-auto max-w-6xl px-4 pb-4 flex items-center gap-1">
             {fotos.map((_, idx) => (
               <button
                 key={idx}
                 type="button"
                 onClick={() => setSlideActivo(idx)}
-                className={`h-2 rounded transition-colors duration-150 ${
-                  slideActivo === idx ? 'w-8 bg-orange-500' : 'w-2 bg-white/40 hover:bg-white/70'
-                }`}
+                className="group flex min-h-[44px] min-w-[36px] items-center justify-center p-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 rounded-md"
                 aria-label={`Ver foto ${idx + 1}`}
-              />
+                aria-current={slideActivo === idx ? 'true' : undefined}
+              >
+                <span
+                  className={`h-2 rounded-full transition-[width,background-color] duration-200 ${
+                    slideActivo === idx ? 'w-8 bg-orange-500' : 'w-2.5 bg-white/40 group-hover:bg-white/70'
+                  }`}
+                />
+              </button>
             ))}
           </nav>
         )}
@@ -319,18 +243,9 @@ export default function InicioNuevo() {
               </p>
             ) : (
               <div data-ui="results-feed" className="flex flex-col gap-3">
-                <div className="flex flex-col gap-3">
-                  {ultimos_partidos.slice(0, 2).map((p) => (
-                    <PartidoScorecard key={p.id} partido={p} jugado />
-                  ))}
-                </div>
-                {ultimos_partidos.length > 2 && (
-                  <div className="flex flex-col gap-3">
-                    {ultimos_partidos.slice(2, 4).map((p) => (
-                      <PartidoScorecard key={p.id} partido={p} jugado />
-                    ))}
-                  </div>
-                )}
+                {ultimos_partidos.slice(0, 4).map((p) => (
+                  <TarjetaPartido key={p.id} partido={p} jugado />
+                ))}
               </div>
             )}
 
@@ -353,7 +268,7 @@ export default function InicioNuevo() {
                 </div>
                 <div className="flex flex-col gap-3">
                   {proximos_partidos.slice(0, 2).map((p) => (
-                    <PartidoScorecard key={p.id} partido={p} jugado={false} />
+                    <TarjetaPartido key={p.id} partido={p} jugado={false} />
                   ))}
                 </div>
               </div>

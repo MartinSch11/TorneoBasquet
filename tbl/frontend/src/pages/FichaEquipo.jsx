@@ -52,10 +52,12 @@ export default function FichaEquipo() {
       </Link>
 
       {/* Cabecera del Equipo */}
-      <header className="flex flex-col items-center gap-5 rounded-2xl border border-border bg-surface p-6 sm:flex-row">
-        <EscudoEquipo url={data.escudo_url} nombre={data.nombre} className="h-20 w-20 shrink-0" />
+      <header className="flex flex-col items-center gap-5 rounded-xl border border-border bg-surface p-5 sm:p-6 sm:flex-row">
+        <EscudoEquipo url={data.escudo_url} nombre={data.nombre} className="h-16 w-16 sm:h-20 sm:w-20 shrink-0" />
         <div className="text-center sm:text-left">
-          <h1 className="font-display text-4xl font-bold tracking-tight text-text text-balance">{data.nombre}</h1>
+          <h1 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-text text-balance">
+            {data.nombre}
+          </h1>
           <p className="text-sm font-medium text-text-muted mt-1 tabular-nums">
             {data.pj} PJ · {data.pg} PG · {data.pp} PP
           </p>
@@ -64,47 +66,47 @@ export default function FichaEquipo() {
 
       {/* Partidos Disputados */}
       <div className="mt-8">
-        {torneosDisponibles.length > 0 && (
-          <div className="mb-2 flex flex-wrap items-center gap-2 text-xs sm:text-sm font-medium text-text-muted">
-            <span>Mostrando datos del Torneo:</span>
-            <select
-              value={torneoActivoId}
-              onChange={handleTorneoChange}
-              className="rounded-lg border border-border bg-surface px-2.5 py-1 text-xs sm:text-sm font-semibold text-text outline-none focus:border-orange-500 focus-visible:ring-2 focus-visible:ring-orange-500 transition-colors cursor-pointer max-w-full"
-              aria-label="Seleccionar torneo para filtrar partidos"
-            >
-              {torneosDisponibles.map((t) => (
-                <option key={t.id} value={t.id}>
-                  {t.etiqueta || `${t.categoria} ${t.edicion} · ${t.temporada}`}
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
+        <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <h2 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-text text-balance">
+            Partidos disputados
+          </h2>
+          {torneosDisponibles.length > 0 && (
+            <div className="flex items-center gap-2 text-xs sm:text-sm font-medium text-text-muted">
+              <span>Torneo:</span>
+              <select
+                value={torneoActivoId}
+                onChange={handleTorneoChange}
+                className="h-9 rounded-lg border border-border bg-surface px-2.5 py-1 text-xs sm:text-sm font-semibold text-text outline-none focus:border-orange-500 focus-visible:ring-2 focus-visible:ring-orange-500 transition-colors cursor-pointer max-w-full"
+                aria-label="Seleccionar torneo para filtrar partidos"
+              >
+                {torneosDisponibles.map((t) => (
+                  <option key={t.id} value={t.id}>
+                    {t.etiqueta || `${t.categoria} ${t.edicion} · ${t.temporada}`}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+        </div>
 
-        <h2 className="font-display text-2xl font-bold tracking-tight text-text text-balance">
-          Partidos disputados
-        </h2>
-        <hr className="mt-2 mb-4 border-border/80" />
-
-        <div className="overflow-x-auto rounded-xl border border-border bg-surface shadow-sm">
+        <div className="overflow-x-auto rounded-xl border border-border bg-surface no-scrollbar">
           {partidos.length === 0 ? (
             <p className="px-4 py-8 text-center text-text-muted text-sm">
               Sin partidos disputados en este torneo
             </p>
           ) : (
-            <table className="w-full text-left text-sm border-collapse">
-              <thead className="bg-gradient-to-r from-orange-600 via-orange-500 to-amber-600 text-white font-bold text-xs uppercase tracking-wider">
+            <table data-ui="data-table" className="w-full text-left text-sm border-collapse min-w-[540px]">
+              <thead data-ui="table-head" className="bg-page border-b border-border text-xs uppercase font-bold text-text-muted">
                 <tr>
                   <th scope="col" className="px-4 py-3">Fase</th>
                   <th scope="col" className="px-3 py-3">Instancia</th>
-                  <th scope="col" className="px-3 py-3 text-center">Dia</th>
+                  <th scope="col" className="px-3 py-3 text-center">Día</th>
                   <th scope="col" className="px-3 py-3 text-center">Fecha</th>
                   <th scope="col" className="px-4 py-3">Versus</th>
                   <th scope="col" className="px-4 py-3 text-center">Resultado</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border/40">
+              <tbody data-ui="table-body" className="divide-y divide-border/60">
                 {partidos.map((p) => (
                   <tr
                     key={p.id}
@@ -138,19 +140,19 @@ export default function FichaEquipo() {
                     <td className="px-4 py-3 text-center whitespace-nowrap">
                       <Link
                         to={`/partidos/${p.id}`}
-                        className="inline-flex items-center gap-1 font-bold underline decoration-2 decoration-orange-500/60 hover:text-orange-500 transition-colors"
+                        className="inline-flex items-center gap-1 font-bold hover:text-orange-500 transition-colors"
                         title="Ver detalle del partido"
                       >
                         <span
-                          className={
+                          className={`font-extrabold px-1.5 py-0.5 rounded text-xs ${
                             p.gano
-                              ? 'text-emerald-600 dark:text-emerald-400 font-extrabold'
-                              : 'text-red-500 dark:text-red-400 font-extrabold'
-                          }
+                              ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400'
+                              : 'bg-rose-500/15 text-rose-600 dark:text-rose-400'
+                          }`}
                         >
                           {p.gano ? 'G' : 'P'}
                         </span>
-                        <span className="text-text tabular-nums">{p.pts_local}-{p.pts_visitante}</span>
+                        <span className="text-text tabular-nums font-athletic text-base ml-1">{p.pts_local}-{p.pts_visitante}</span>
                       </Link>
                     </td>
                   </tr>
@@ -163,27 +165,35 @@ export default function FichaEquipo() {
 
       {/* Jugadores y Estadísticas */}
       <div className="mt-8">
-        <h2 className="font-display text-2xl font-bold tracking-tight text-text text-balance">
-          Jugadores
-        </h2>
-        <hr className="mt-2 mb-4 border-border/80" />
+        <div className="mb-3 flex items-center justify-between">
+          <h2 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-text text-balance">
+            Plantel y Estadísticas
+          </h2>
+          <span className="text-xs text-text-muted tabular-nums">
+            {data.jugadores.length} jugadores
+          </span>
+        </div>
 
-        <div className="overflow-x-auto rounded-xl border border-border bg-surface shadow-sm">
+        <div className="overflow-x-auto rounded-xl border border-border bg-surface no-scrollbar">
           {data.jugadores.length === 0 ? (
             <p className="px-4 py-8 text-center text-text-muted text-sm">
               Sin jugadores cargados
             </p>
           ) : (
-            <table className="w-full text-left text-sm border-collapse">
-              <thead className="bg-gradient-to-r from-orange-600 via-orange-500 to-amber-600 text-white font-bold text-xs uppercase tracking-wider">
+            <table data-ui="data-table" className="w-full text-left text-sm border-collapse min-w-[700px]">
+              <thead data-ui="table-head" className="bg-page border-b border-border text-xs uppercase font-bold text-text-muted">
                 <tr>
-                  <th scope="col" className="w-12 px-2.5 py-3 text-center">#</th>
-                  <th scope="col" className="px-4 py-3">Nombre</th>
+                  <th scope="col" className="sticky left-0 z-20 bg-page w-10 min-w-[38px] max-w-[38px] px-2 py-3 text-center">
+                    #
+                  </th>
+                  <th scope="col" data-ui="sticky-col" className="sticky left-[38px] z-20 bg-page border-r border-border px-3 py-3 text-left min-w-[120px] max-w-[150px] sm:max-w-none truncate">
+                    Nombre
+                  </th>
                   <th scope="col" className="px-2.5 py-3 text-center">PJ</th>
                   <th scope="col" className="px-2.5 py-3 text-center">1%</th>
                   <th scope="col" className="px-2.5 py-3 text-center">2%</th>
                   <th scope="col" className="px-2.5 py-3 text-center">3%</th>
-                  <th scope="col" className="px-2.5 py-3 text-center">Ptos</th>
+                  <th scope="col" className="px-2.5 py-3 text-center text-orange-600 dark:text-orange-400 font-extrabold">Ptos</th>
                   <th scope="col" className="px-2.5 py-3 text-center">PP</th>
                   <th scope="col" className="px-2.5 py-3 text-center">As</th>
                   <th scope="col" className="px-2.5 py-3 text-center">RO</th>
@@ -197,68 +207,71 @@ export default function FichaEquipo() {
                   <th scope="col" className="px-3 py-3 text-center">Val</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border/40">
-                {data.jugadores.map((j) => (
-                  <tr
-                    key={j.id}
-                    className="hover:bg-orange-500/10 transition-colors"
-                  >
-                    <td className="w-12 px-2.5 py-3 text-center font-athletic text-base font-bold tabular-nums text-orange-600 dark:text-orange-400 whitespace-nowrap">
-                      {j.numero !== null && j.numero !== undefined ? j.numero : '-'}
-                    </td>
-                    <td className="px-4 py-3 font-semibold uppercase text-text whitespace-nowrap">
-                      {j.nombre}
-                    </td>
-                    <td className="px-2.5 py-3 text-center tabular-nums text-text font-medium whitespace-nowrap">
-                      {j.pj ?? 0}
-                    </td>
-                    <td className="px-2.5 py-3 text-center tabular-nums text-text-muted text-xs font-medium whitespace-nowrap">
-                      {(j.pct_1 ?? 0).toFixed(2)}
-                    </td>
-                    <td className="px-2.5 py-3 text-center tabular-nums text-text-muted text-xs font-medium whitespace-nowrap">
-                      {(j.pct_2 ?? 0).toFixed(2)}
-                    </td>
-                    <td className="px-2.5 py-3 text-center tabular-nums text-text-muted text-xs font-medium whitespace-nowrap">
-                      {(j.pct_3 ?? 0).toFixed(2)}
-                    </td>
-                    <td className="px-2.5 py-3 text-center tabular-nums text-text font-bold text-sm whitespace-nowrap">
-                      {j.ptos ?? 0}
-                    </td>
-                    <td className="px-2.5 py-3 text-center tabular-nums text-text font-medium text-xs whitespace-nowrap">
-                      {(j.pp ?? 0).toFixed(2)}
-                    </td>
-                    <td className="px-2.5 py-3 text-center tabular-nums text-text font-medium text-xs whitespace-nowrap">
-                      {j.asistencias ?? 0}
-                    </td>
-                    <td className="px-2.5 py-3 text-center tabular-nums text-text-muted text-xs whitespace-nowrap">
-                      {j.ro ?? 0}
-                    </td>
-                    <td className="px-2.5 py-3 text-center tabular-nums text-text-muted text-xs whitespace-nowrap">
-                      {j.rd ?? 0}
-                    </td>
-                    <td className="px-2.5 py-3 text-center tabular-nums text-text-muted text-xs whitespace-nowrap">
-                      {j.fp ?? 0}
-                    </td>
-                    <td className="px-2.5 py-3 text-center tabular-nums text-text-muted text-xs whitespace-nowrap">
-                      {j.fr ?? 0}
-                    </td>
-                    <td className="px-2.5 py-3 text-center tabular-nums text-text-muted text-xs whitespace-nowrap">
-                      {(j.pf ?? 0).toFixed(2)}
-                    </td>
-                    <td className="px-2.5 py-3 text-center tabular-nums text-text font-medium text-xs whitespace-nowrap">
-                      {j.recuperos ?? 0}
-                    </td>
-                    <td className="px-2.5 py-3 text-center tabular-nums text-text-muted text-xs whitespace-nowrap">
-                      {j.perdidas ?? 0}
-                    </td>
-                    <td className="px-2.5 py-3 text-center tabular-nums text-text-muted text-xs whitespace-nowrap">
-                      {j.bloqueos ?? 0}
-                    </td>
-                    <td className="px-3 py-3 text-center tabular-nums font-bold text-xs text-text whitespace-nowrap">
-                      {(j.val ?? 0).toFixed(2)}
-                    </td>
-                  </tr>
-                ))}
+              <tbody data-ui="table-body" className="divide-y divide-border/60">
+                {data.jugadores.map((j, idx) => {
+                  const rowBg = idx % 2 === 0 ? 'bg-surface' : 'bg-page'
+                  return (
+                    <tr
+                      key={j.id}
+                      className={`${rowBg} hover:bg-orange-500/10 transition-colors`}
+                    >
+                      <td className={`sticky left-0 z-10 ${rowBg} w-10 min-w-[38px] max-w-[38px] px-2 py-3 text-center font-athletic text-base font-bold tabular-nums text-orange-600 dark:text-orange-400 whitespace-nowrap`}>
+                        {j.numero !== null && j.numero !== undefined ? j.numero : '-'}
+                      </td>
+                      <td data-ui="sticky-col" className={`sticky left-[38px] z-10 ${rowBg} border-r border-border px-3 py-3 font-semibold text-text max-w-[120px] sm:max-w-none truncate whitespace-nowrap`}>
+                        {j.nombre}
+                      </td>
+                      <td className="px-2.5 py-3 text-center tabular-nums text-text font-medium whitespace-nowrap">
+                        {j.pj ?? 0}
+                      </td>
+                      <td className="px-2.5 py-3 text-center tabular-nums text-text-muted text-xs font-medium whitespace-nowrap">
+                        {(j.pct_1 ?? 0).toFixed(2)}
+                      </td>
+                      <td className="px-2.5 py-3 text-center tabular-nums text-text-muted text-xs font-medium whitespace-nowrap">
+                        {(j.pct_2 ?? 0).toFixed(2)}
+                      </td>
+                      <td className="px-2.5 py-3 text-center tabular-nums text-text-muted text-xs font-medium whitespace-nowrap">
+                        {(j.pct_3 ?? 0).toFixed(2)}
+                      </td>
+                      <td className="px-2.5 py-3 text-center tabular-nums text-orange-600 dark:text-orange-400 font-athletic font-bold text-base whitespace-nowrap">
+                        {j.ptos ?? 0}
+                      </td>
+                      <td className="px-2.5 py-3 text-center tabular-nums text-text font-medium text-xs whitespace-nowrap">
+                        {(j.pp ?? 0).toFixed(2)}
+                      </td>
+                      <td className="px-2.5 py-3 text-center tabular-nums text-text font-medium text-xs whitespace-nowrap">
+                        {j.asistencias ?? 0}
+                      </td>
+                      <td className="px-2.5 py-3 text-center tabular-nums text-text-muted text-xs font-medium whitespace-nowrap">
+                        {j.ro ?? 0}
+                      </td>
+                      <td className="px-2.5 py-3 text-center tabular-nums text-text-muted text-xs font-medium whitespace-nowrap">
+                        {j.rd ?? 0}
+                      </td>
+                      <td className="px-2.5 py-3 text-center tabular-nums text-text-muted text-xs font-medium whitespace-nowrap">
+                        {j.fp ?? 0}
+                      </td>
+                      <td className="px-2.5 py-3 text-center tabular-nums text-text-muted text-xs font-medium whitespace-nowrap">
+                        {j.fr ?? 0}
+                      </td>
+                      <td className="px-2.5 py-3 text-center tabular-nums text-text-muted text-xs font-medium whitespace-nowrap">
+                        {(j.pf ?? 0).toFixed(2)}
+                      </td>
+                      <td className="px-2.5 py-3 text-center tabular-nums text-text font-medium text-xs whitespace-nowrap">
+                        {j.recuperos ?? 0}
+                      </td>
+                      <td className="px-2.5 py-3 text-center tabular-nums text-text-muted text-xs font-medium whitespace-nowrap">
+                        {j.perdidas ?? 0}
+                      </td>
+                      <td className="px-2.5 py-3 text-center tabular-nums text-text-muted text-xs font-medium whitespace-nowrap">
+                        {j.bloqueos ?? 0}
+                      </td>
+                      <td className="px-3 py-3 text-center tabular-nums font-bold text-xs text-text whitespace-nowrap">
+                        {(j.val ?? 0).toFixed(2)}
+                      </td>
+                    </tr>
+                  )
+                })}
               </tbody>
             </table>
           )}

@@ -103,7 +103,7 @@ export default function MenuAcciones({ acciones = [], disabled = false }) {
                 : 'auto',
               right: `${posicion.right}px`,
             }}
-            className="z-[9999] w-44 rounded-xl border border-border bg-surface p-1.5 shadow-2xl animate-in fade-in zoom-in-95 duration-100"
+            className="z-[9999] w-44 rounded-xl border border-border bg-surface p-1.5 shadow-2xl animate-in fade-in zoom-in-95 duration-100" /* taste-skill-ignore */
           >
             <div className="flex flex-col gap-0.5">
               {acciones.map((acc, idx) => (

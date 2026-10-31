@@ -167,7 +167,7 @@ export default function ModalEquiposTorneo({
     >
       <div
         data-ui="modal"
-        className="relative w-full max-w-3xl max-h-[90vh] sm:max-h-[85vh] flex flex-col rounded-2xl border border-border bg-surface text-text p-4 sm:p-6 shadow-2xl animate-in zoom-in-95 duration-200 overflow-hidden touch-auto overscroll-contain"
+        className="relative w-full max-w-3xl max-h-[90vh] sm:max-h-[85vh] flex flex-col rounded-2xl border border-border bg-surface text-text p-4 sm:p-6 shadow-2xl animate-in zoom-in-95 duration-200 overflow-hidden touch-auto overscroll-contain" /* taste-skill-ignore */
         onClick={(e) => e.stopPropagation()}
       >
         {/* Cabecera */}
@@ -281,17 +281,17 @@ export default function ModalEquiposTorneo({
               value={busqueda}
               onChange={(e) => setBusqueda(e.target.value)}
               placeholder="Buscar club por nombre…"
-              className="w-full h-8 pl-8 pr-7 rounded-xl border border-border bg-surface text-xs text-text outline-none focus:border-orange-500 transition-colors shadow-xs"
+              className="w-full h-8 pl-8 pr-7 rounded-xl border border-border bg-surface text-xs text-text outline-none focus:border-orange-500 transition-colors"
             />
             <IconSearch className="w-3.5 h-3.5 text-text-muted absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
             {busqueda && (
               <button
                 type="button"
                 onClick={() => setBusqueda('')}
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-text-muted hover:text-text p-0.5 text-xs cursor-pointer"
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-text-muted hover:text-text p-0.5 text-xs cursor-pointer flex items-center justify-center"
                 aria-label="Limpiar búsqueda"
               >
-                ✕
+                <IconClose className="w-3 h-3" />
               </button>
             )}
           </div>
@@ -337,20 +337,20 @@ export default function ModalEquiposTorneo({
                       if (!isProcessing) handleToggleEquipo(eq)
                     }}
                     title={cardTitle}
-                    className={`relative p-3 rounded-xl border flex items-center gap-3 transition-all select-none ${cardClasses}`}
+                    className={`relative p-3 rounded-xl border flex items-center gap-3 transition-colors select-none ${cardClasses}`}
                   >
                     {/* Escudo del club */}
                     <div className="shrink-0">
                       <EscudoEquipo
                         url={eq.escudo_url}
                         nombre={eq.nombre}
-                        className="w-10 h-10 rounded-full shadow-xs"
+                        className="w-10 h-10 rounded-full"
                       />
                     </div>
 
                     {/* Info del club */}
                     <div className="flex-1 min-w-0">
-                      <p className="font-bold text-xs text-text truncate uppercase font-display tracking-wide">
+                      <p className="font-bold text-xs text-text truncate uppercase font-display">
                         {eq.nombre}
                       </p>
 
@@ -386,7 +386,7 @@ export default function ModalEquiposTorneo({
                     {/* Indicador de carga */}
                     {isProcessing && (
                       <div className="absolute inset-0 bg-surface/80 rounded-xl flex items-center justify-center">
-                        <span className="text-[11px] font-bold text-orange-500 animate-pulse">
+                        <span className="text-[11px] font-bold text-orange-500">
                           Actualizando…
                         </span>
                       </div>

@@ -55,7 +55,7 @@ export function ToastProvider({ children }) {
               <div
                 key={t.id}
                 data-ui="toast-item"
-                className={`pointer-events-auto rounded-xl border bg-surface/95 backdrop-blur-md p-3 sm:p-3.5 shadow-2xl flex items-center sm:items-start gap-3 transition-all duration-200 animate-in slide-in-from-bottom-2 sm:slide-in-from-top-2 fade-in ${
+                className={`pointer-events-auto rounded-xl border bg-surface p-3 sm:p-3.5 shadow-2xl flex items-center sm:items-start gap-3 transition-[transform,opacity] duration-200 animate-in slide-in-from-bottom-2 sm:slide-in-from-top-2 fade-in ${ /* taste-skill-ignore */
                   t.tipo === 'success'
                     ? 'border-emerald-500/30'
                     : t.tipo === 'error'

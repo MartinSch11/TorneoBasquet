@@ -129,7 +129,8 @@ export default function Galeria() {
           role="dialog"
           aria-modal="true"
           aria-label="Visualizador de fotos"
-          className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/95 p-4 sm:p-6 backdrop-blur-sm animate-fade-in"
+          data-ui="lightbox"
+          className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/95 p-4 sm:p-6 animate-fade-in"
           onClick={cerrar}
         >
           <div className="absolute top-4 inset-x-4 flex items-center justify-between text-white/80 z-10" onClick={(e) => e.stopPropagation()}>
@@ -168,7 +169,7 @@ export default function Galeria() {
             <img
               src={activeFoto.url}
               alt={activeFoto.titulo || 'Foto de la galería'}
-              className="max-h-[80vh] max-w-[90vw] object-contain rounded-lg shadow-2xl select-none"
+              className="max-h-[80vh] max-w-[90vw] object-contain rounded-lg border border-white/10 select-none"
             />
             {activeFoto.titulo && (
               <p className="mt-3 text-center text-sm font-medium text-white/90 bg-black/40 px-4 py-1.5 rounded-full border border-white/10 max-w-md truncate">
