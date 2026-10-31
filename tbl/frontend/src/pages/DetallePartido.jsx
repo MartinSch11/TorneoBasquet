@@ -215,9 +215,9 @@ export default function DetallePartido() {
   const tienePlanillaCargada = sumaLocal > 0 || sumaVisitante > 0 || progresLocal > 0 || progresVisitante > 0
 
   return (
-    <section className="mx-auto max-w-6xl px-4 py-6 flex flex-col gap-4">
+    <section className="mx-auto max-w-6xl px-0 sm:px-4 py-4 sm:py-6 flex flex-col gap-3 sm:gap-4">
       {/* Navegación superior */}
-      <div className="flex items-center justify-between gap-2">
+      <div className="px-4 sm:px-0 flex items-center justify-between gap-2">
         <Link
           to="/resultados"
           className="inline-flex items-center gap-1 text-xs sm:text-sm font-semibold text-text-muted hover:text-orange-500 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 rounded-md shrink-0"
@@ -239,7 +239,7 @@ export default function DetallePartido() {
       </div>
 
       {/* Cabecera de Planilla Oficial */}
-      <div data-ui="card" className="rounded-2xl border border-border bg-surface p-4 sm:p-5 flex flex-col gap-3">
+      <div data-ui="card" className="rounded-none sm:rounded-2xl border-y sm:border border-border bg-surface p-4 sm:p-5 flex flex-col gap-3">
         <div data-ui="card-header" className="flex flex-wrap items-center justify-between gap-2 border-b border-border pb-3">
           <div>
             <div className="flex items-center gap-2">
@@ -459,7 +459,7 @@ export default function DetallePartido() {
         ) : null}
 
         {/* TABLA DE JUGADORES (Box Score de solo lectura) */}
-        <div data-ui="admin-table" className="border border-border rounded-xl bg-page overflow-hidden flex flex-col">
+        <div data-ui="admin-table" className="-mx-4 sm:mx-0 border-y sm:border border-border sm:rounded-xl bg-page overflow-hidden flex flex-col">
           <div className="overflow-x-auto no-scrollbar">
             <table data-ui="data-table" className="w-full text-left border-collapse tabular-nums text-xs min-w-[560px]">
               <thead data-ui="table-head" className="bg-surface border-b border-border text-[11px] font-bold uppercase tracking-wider text-text-muted">
