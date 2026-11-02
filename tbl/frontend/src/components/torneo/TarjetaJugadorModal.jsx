@@ -65,19 +65,81 @@ export default function TarjetaJugadorModal({
         className="relative w-full max-w-[340px] sm:max-w-[360px] rounded-2xl border-2 border-orange-500/50 bg-surface text-text p-5 flex flex-col gap-4 overflow-hidden select-none touch-auto"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Fondo: Trazado de cancha de básquet (SVG watermark) */}
+        {/* Fondo: Trazado de cancha de básquet reglamentaria completa (SVG watermark) */}
         <svg
-          className="absolute inset-0 w-full h-full pointer-events-none opacity-[0.06] dark:opacity-[0.07] text-text select-none"
+          className="absolute inset-0 w-full h-full pointer-events-none opacity-[0.12] dark:opacity-[0.16] text-text select-none"
           viewBox="0 0 360 640"
           fill="none"
           stroke="currentColor"
           strokeWidth="1.5"
         >
-          <circle cx="180" cy="140" r="90" />
-          <path d="M90 0v140h180V0" />
-          <circle cx="180" cy="500" r="90" />
-          <path d="M90 640V500h180v140" />
-          <line x1="0" y1="320" x2="360" y2="320" />
+          {/* Perímetro exterior de la cancha */}
+          <rect x="10" y="10" width="340" height="620" rx="4" />
+
+          {/* Línea divisoria y círculo central */}
+          <line x1="10" y1="320" x2="350" y2="320" />
+          <circle cx="180" cy="320" r="45" />
+          <circle cx="180" cy="320" r="2" fill="currentColor" />
+
+          {/* Saque lateral en campo de ataque (Throw-in lines) */}
+          <line x1="10" y1="225" x2="22" y2="225" />
+          <line x1="338" y1="415" x2="350" y2="415" />
+
+          {/* === CAMPO SUPERIOR === */}
+          {/* Soporte, tablero y aro */}
+          <line x1="180" y1="10" x2="180" y2="28" />
+          <line x1="156" y1="28" x2="204" y2="28" strokeWidth="2" />
+          <circle cx="180" cy="38" r="7.5" />
+
+          {/* Semicírculo de no-carga (Restricted area) */}
+          <path d="M 156 38 A 24 24 0 0 0 204 38" />
+
+          {/* Llave / Pintura */}
+          <path d="M 125 10 v 132 h 110 V 10" />
+          {/* Marcas de rebote en los costados de la llave */}
+          <line x1="118" y1="48" x2="125" y2="48" />
+          <line x1="117" y1="72" x2="125" y2="72" strokeWidth="2.5" />
+          <line x1="118" y1="96" x2="125" y2="96" />
+          <line x1="118" y1="120" x2="125" y2="120" />
+          <line x1="235" y1="48" x2="242" y2="48" />
+          <line x1="235" y1="72" x2="243" y2="72" strokeWidth="2.5" />
+          <line x1="235" y1="96" x2="242" y2="96" />
+          <line x1="235" y1="120" x2="242" y2="120" />
+
+          {/* Círculo de tiro libre (mitad exterior sólida, mitad interior punteada) */}
+          <path d="M 135 142 A 45 45 0 0 0 225 142" />
+          <path d="M 225 142 A 45 45 0 0 0 135 142" strokeDasharray="5 4" />
+
+          {/* Línea de 3 puntos superior (esquinas rectas + arco) */}
+          <path d="M 32 10 v 60 A 151 151 0 0 0 328 70 V 10" />
+
+          {/* === CAMPO INFERIOR === */}
+          {/* Soporte, tablero y aro */}
+          <line x1="180" y1="630" x2="180" y2="612" />
+          <line x1="156" y1="612" x2="204" y2="612" strokeWidth="2" />
+          <circle cx="180" cy="602" r="7.5" />
+
+          {/* Semicírculo de no-carga */}
+          <path d="M 156 602 A 24 24 0 0 1 204 602" />
+
+          {/* Llave inferior */}
+          <path d="M 125 630 v -132 h 110 v 132" />
+          {/* Marcas de rebote */}
+          <line x1="118" y1="592" x2="125" y2="592" />
+          <line x1="117" y1="568" x2="125" y2="568" strokeWidth="2.5" />
+          <line x1="118" y1="544" x2="125" y2="544" />
+          <line x1="118" y1="520" x2="125" y2="520" />
+          <line x1="235" y1="592" x2="242" y2="592" />
+          <line x1="235" y1="568" x2="243" y2="568" strokeWidth="2.5" />
+          <line x1="235" y1="544" x2="242" y2="544" />
+          <line x1="235" y1="520" x2="242" y2="520" />
+
+          {/* Círculo de tiro libre inferior */}
+          <path d="M 135 498 A 45 45 0 0 1 225 498" />
+          <path d="M 225 498 A 45 45 0 0 1 135 498" strokeDasharray="5 4" />
+
+          {/* Línea de 3 puntos inferior */}
+          <path d="M 32 630 v -60 A 151 151 0 0 1 328 570 v 60" />
         </svg>
 
         {/* 1. CABECERA: Liga, Fecha y Marcador */}
