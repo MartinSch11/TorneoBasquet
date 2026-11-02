@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom'
 import api from '../services/api'
 import Spinner from '../components/ui/Spinner'
 import EscudoEquipo from '../components/ui/EscudoEquipo'
+import TarjetaJugadorModal from '../components/torneo/TarjetaJugadorModal'
 import { formatFecha, formatHorario } from '../utils/formatFecha'
 
 function formatFase(fase) {
@@ -21,6 +22,17 @@ export default function DetallePartido() {
   const [jugadoresLocal, setJugadoresLocal] = useState([])
   const [jugadoresVisitante, setJugadoresVisitante] = useState([])
   const [stats, setStats] = useState({})
+  const [tarjetaModalData, setTarjetaModalData] = useState(null)
+
+  const abrirTarjetaModal = (jugador, equipoNombre, escudoEquipo, esMvp = false) => {
+    setTarjetaModalData({
+      jugador,
+      stats: stats[jugador.id] || {},
+      equipoNombre,
+      escudoEquipo,
+      esMvp,
+    })
+  }
 
   useEffect(() => {
     let cancelado = false
@@ -414,41 +426,68 @@ export default function DetallePartido() {
 
         {/* Destacado del partido / aviso de marcador global */}
         {maximoAnotador ? (
-          <div
-            data-ui="highlight-banner"
-            className="flex items-center justify-between gap-3 px-3.5 py-2.5 rounded-xl border border-orange-500/30 bg-orange-500/10"
+          <button
+            type="button"
+            onClick={() =>
+              abrirTarjetaModal(
+                maximoAnotador,
+                maximoAnotador.equipo,
+                maximoAnotador.equipo === partido.equipo_local
+                  ? partido.escudo_local
+                  : partido.escudo_visitante,
+                true,
+              )
+            }
+            data-ui="mvp-card"
+            className="w-full text-left cursor-pointer rounded-xl border border-orange-500/30 bg-orange-500/5 hover:bg-orange-500/10 hover:border-orange-500/50 p-3 sm:p-4 flex items-center justify-between gap-3 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
+            title="Ver estadísticas del MVP"
           >
-            <div className="flex items-center gap-2.5 min-w-0">
-              <span className="w-2.5 h-2.5 rounded-full bg-orange-500 shrink-0" />
+            <div className="flex items-center gap-3 min-w-0">
+              <EscudoEquipo
+                url={
+                  maximoAnotador.equipo === partido.equipo_local
+                    ? partido.escudo_local
+                    : partido.escudo_visitante
+                }
+                nombre={maximoAnotador.equipo}
+                className="w-10 h-10 sm:w-12 sm:h-12 shrink-0"
+              />
               <div className="min-w-0">
-                <span className="block text-xs font-bold text-orange-600 dark:text-orange-400">
-                  Máximo anotador del partido
-                </span>
-                <div className="flex items-center gap-1.5 min-w-0">
-                  <span className="text-xs sm:text-sm font-bold text-text truncate">
+                <div className="flex items-center gap-2">
+                  <span className="inline-flex items-center gap-1 text-xs font-bold text-orange-600 dark:text-orange-400 bg-orange-500/15 px-2 py-0.5 rounded">
+                    <svg className="w-3.5 h-3.5 fill-current shrink-0" viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                    </svg>
+                    <span>MVP</span>
+                  </span>
+                  <span className="text-xs text-text-muted truncate">
+                    {maximoAnotador.equipo}
+                  </span>
+                </div>
+                <div className="flex items-baseline gap-2 mt-0.5 min-w-0">
+                  <span className="font-display font-bold text-base sm:text-lg text-text truncate">
                     {maximoAnotador.nombre}
-                    {maximoAnotador.numero !== null && maximoAnotador.numero !== undefined
-                      ? ` (#${maximoAnotador.numero})`
-                      : ''}
                   </span>
-                  <span className="text-[11px] sm:text-xs text-text-muted whitespace-nowrap shrink-0">
-                    · {maximoAnotador.equipo}
-                  </span>
+                  {maximoAnotador.numero !== null && maximoAnotador.numero !== undefined && (
+                    <span className="font-athletic font-bold text-sm text-orange-600 dark:text-orange-400 shrink-0">
+                      #{maximoAnotador.numero}
+                    </span>
+                  )}
                 </div>
               </div>
             </div>
 
             <div className="text-right shrink-0">
-              <div className="font-athletic font-extrabold text-base sm:text-lg text-orange-600 dark:text-orange-400 tabular-nums leading-none">
+              <div className="font-athletic font-black text-2xl sm:text-3xl text-orange-600 dark:text-orange-400 tabular-nums leading-none">
                 {maximoAnotador.puntos} <span className="text-xs font-display">PTS</span>
               </div>
               {maximoAnotador.triples > 0 && (
-                <div className="text-[10px] sm:text-[11px] text-text-muted tabular-nums mt-0.5 whitespace-nowrap">
+                <div className="text-xs text-text-muted tabular-nums mt-0.5">
                   {maximoAnotador.triples} {maximoAnotador.triples === 1 ? 'triple' : 'triples'}
                 </div>
               )}
             </div>
-          </div>
+          </button>
         ) : yaJugado && !tienePlanillaCargada ? (
           <div data-ui="info-banner" className="flex items-center gap-2 px-3 py-2 rounded-xl border border-border bg-page text-xs text-text-muted">
             <span className="w-2 h-2 rounded-full bg-border shrink-0" />
@@ -542,7 +581,21 @@ export default function DetallePartido() {
                           {j.numero !== null && j.numero !== undefined ? j.numero : '-'}
                         </td>
                         <td data-ui="sticky-col" className="sticky left-[36px] z-10 bg-page border-r border-border py-2 px-3 font-sans font-semibold text-text max-w-[120px] sm:max-w-none truncate whitespace-nowrap">
-                          {j.nombre}
+                          <button
+                            type="button"
+                            onClick={() =>
+                              abrirTarjetaModal(
+                                j,
+                                equipoNombreActual,
+                                esEquipoLocal ? partido.escudo_local : partido.escudo_visitante,
+                                maximoAnotador && maximoAnotador.id === j.id,
+                              )
+                            }
+                            className="hover:text-orange-500 transition-colors truncate block w-full text-left font-semibold text-text focus-visible:outline-none focus-visible:underline"
+                            title={`Ver ficha de ${j.nombre}`}
+                          >
+                            {j.nombre}
+                          </button>
                         </td>
 
                         {/* 1P */}
@@ -651,6 +704,20 @@ export default function DetallePartido() {
           </div>
         </div>
       </div>
+
+      {/* Modal Tarjeta Oficial del Jugador */}
+      {tarjetaModalData && (
+        <TarjetaJugadorModal
+          isOpen={Boolean(tarjetaModalData)}
+          onClose={() => setTarjetaModalData(null)}
+          jugador={tarjetaModalData.jugador}
+          stats={tarjetaModalData.stats}
+          equipoNombre={tarjetaModalData.equipoNombre}
+          escudoEquipo={tarjetaModalData.escudoEquipo}
+          partido={partido}
+          esMvp={tarjetaModalData.esMvp}
+        />
+      )}
     </section>
   )
 }
