@@ -62,11 +62,30 @@ export default function GestionCanchas() {
     if (!busqueda) return true
     const q = busqueda.toLowerCase()
     return (
-      c.nombre.toLowerCase().includes(q) ||
+      (c.nombre && c.nombre.toLowerCase().includes(q)) ||
       (c.direccion && c.direccion.toLowerCase().includes(q)) ||
       (c.ciudad && c.ciudad.toLowerCase().includes(q))
     )
   })
+
+  const getAccionesCancha = (c) => [
+    {
+      label: 'Editar cancha',
+      icon: <IconEdit className="w-3.5 h-3.5 text-text-muted" />,
+      onClick: () => handleAbrirEditar(c),
+    },
+    {
+      label: c.activo ? 'Desactivar cancha' : 'Activar cancha',
+      icon: c.activo ? (
+        <IconPause className="w-3.5 h-3.5 text-orange-500" />
+      ) : (
+        <IconPlay className="w-3.5 h-3.5 text-emerald-500" />
+      ),
+      warning: Boolean(c.activo),
+      success: !c.activo,
+      onClick: () => handleToggleActivo(c),
+    },
+  ]
 
   return (
     <div className="flex flex-col gap-4">
@@ -167,8 +186,48 @@ export default function GestionCanchas() {
         </div>
       ) : (
         <div data-ui="admin-table-container" className="overflow-hidden rounded-xl border border-border bg-surface">
-          <div className="overflow-x-auto">
-            <table data-ui="admin-table" className="w-full min-w-[560px] text-left text-xs">
+          {/* Vista móvil: tarjetas de canchas */}
+          <div className="md:hidden divide-y divide-border/40">
+            {canchasFiltradas.map((c) => (
+              <div key={c.id} className="p-3.5 flex flex-col gap-2 bg-surface hover:bg-page/40 transition-colors">
+                <div className="flex items-center justify-between">
+                  <div className="font-semibold text-text text-sm">
+                    {c.nombre}
+                  </div>
+                  <MenuAcciones
+                    disabled={procesandoId === c.id}
+                    acciones={getAccionesCancha(c)}
+                  />
+                </div>
+                <div className="text-text-muted text-xs">
+                  <div>{c.direccion || '—'}</div>
+                  {c.ciudad && (
+                    <div className="text-[10px] uppercase font-semibold text-text-muted/70">
+                      {c.ciudad}
+                    </div>
+                  )}
+                </div>
+                <div className="flex items-center justify-between text-xs pt-0.5">
+                  <span className="inline-flex items-center gap-1 text-[11px] text-text-muted">
+                    Partidos: <span className="font-bold tabular-nums text-orange-600 dark:text-orange-400">{c.partidos_count || 0}</span>
+                  </span>
+                  <span
+                    className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase border ${
+                      c.activo
+                        ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30'
+                        : 'bg-neutral-500/15 text-neutral-400 border-neutral-500/30'
+                    }`}
+                  >
+                    {c.activo ? 'Activa' : 'Inactiva'}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Vista desktop: tabla */}
+          <div className="hidden md:block overflow-x-auto">
+            <table data-ui="admin-table" className="w-full text-left text-xs">
               <thead data-ui="admin-thead" className="border-b border-border/80 bg-surface/80 text-[11px] font-bold uppercase text-text-muted">
                 <tr>
                   <th scope="col" className="py-3 px-4">Cancha</th>
@@ -219,24 +278,7 @@ export default function GestionCanchas() {
                       <div className="flex items-center justify-center">
                         <MenuAcciones
                           disabled={procesandoId === c.id}
-                          acciones={[
-                            {
-                              label: 'Editar cancha',
-                              icon: <IconEdit className="w-3.5 h-3.5 text-text-muted" />,
-                              onClick: () => handleAbrirEditar(c),
-                            },
-                            {
-                              label: c.activo ? 'Desactivar cancha' : 'Activar cancha',
-                              icon: c.activo ? (
-                                <IconPause className="w-3.5 h-3.5 text-orange-500" />
-                              ) : (
-                                <IconPlay className="w-3.5 h-3.5 text-emerald-500" />
-                              ),
-                              warning: Boolean(c.activo),
-                              success: !c.activo,
-                              onClick: () => handleToggleActivo(c),
-                            },
-                          ]}
+                          acciones={getAccionesCancha(c)}
                         />
                       </div>
                     </td>

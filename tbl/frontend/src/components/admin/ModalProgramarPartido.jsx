@@ -4,6 +4,7 @@ import api from '../../services/api'
 import Spinner from '../ui/Spinner'
 import { IconClose } from '../ui/Icon'
 import useBodyLock from '../../hooks/useBodyLock'
+import { FASES_TORNEO } from '../../utils/formatFase'
 
 function parseError(err) {
   const detail = err.response?.data?.detail
@@ -104,15 +105,11 @@ export default function ModalProgramarPartido({
     return grupos
   }, [equipos])
 
-  // Filtrado de equipos disponibles según el torneo seleccionado o si es fase de promoción
+  // Filtrado de equipos disponibles según el torneo seleccionado
   const equiposDisponibles = useMemo(() => {
-    const esPromocion = form.fase === 'PROMOCION / DESCENSO'
-    if (esPromocion) {
-      return { esCruce: true, grupos: equiposPorCategoria, lista: [] }
-    }
     const filtrados = equipos.filter((eq) => String(eq.torneo_id) === String(form.torneo_id))
     return { esCruce: false, grupos: {}, lista: filtrados }
-  }, [equipos, form.torneo_id, form.fase, equiposPorCategoria])
+  }, [equipos, form.torneo_id])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -201,7 +198,7 @@ export default function ModalProgramarPartido({
               Programar Partido
             </h3>
             <p className="text-xs text-text-muted mt-0.5">
-              Agendá encuentros oficiales del fixture, fases de playoffs o cruces de promoción y descenso.
+              Agendá encuentros oficiales del fixture, fase regular o etapas de playoffs.
             </p>
           </div>
           <button
@@ -378,19 +375,13 @@ export default function ModalProgramarPartido({
               </select>
             </div>
 
-            {equiposDisponibles.esCruce ? (
-              <div className="sm:col-span-2 -mt-2">
-                <p className="text-[11px] text-amber-500 font-medium">
-                  Fase de Promoción / Descenso: podés cruzar equipos de diferentes categorías.
-                </p>
-              </div>
-            ) : equiposDisponibles.lista.length === 0 ? (
+            {equiposDisponibles.lista.length === 0 && (
               <div className="sm:col-span-2 -mt-2">
                 <p className="text-[11px] text-rose-400 font-medium">
                   Este torneo aún no tiene equipos inscriptos. Podés inscribirlos desde "Equipos y Planteles".
                 </p>
               </div>
-            ) : null}
+            )}
 
             {/* Fecha / Jornada del Fixture */}
             <div className="flex flex-col gap-1.5">
@@ -414,23 +405,14 @@ export default function ModalProgramarPartido({
               </label>
               <select
                 value={form.fase}
-                onChange={(e) => {
-                  const nuevaFase = e.target.value
-                  setForm((prev) => ({
-                    ...prev,
-                    fase: nuevaFase,
-                    equipo_local_id: '',
-                    equipo_visitante_id: '',
-                  }))
-                }}
+                onChange={(e) => setForm({ ...form, fase: e.target.value })}
                 className="h-9 rounded-xl border border-border bg-page px-3 text-xs font-semibold text-text outline-none focus:border-orange-500 focus-visible:ring-2 focus-visible:ring-orange-500 transition-colors"
               >
-                <option value="FASE REGULAR">Fase Regular</option>
-                <option value="OCTAVOS">Octavos de Final</option>
-                <option value="CUARTOS">Cuartos de Final</option>
-                <option value="SEMIFINAL">Semifinal</option>
-                <option value="FINAL">Final</option>
-                <option value="PROMOCION / DESCENSO">Promoción / Descenso</option>
+                {FASES_TORNEO.map((f) => (
+                  <option key={f.value} value={f.value}>
+                    {f.label}
+                  </option>
+                ))}
               </select>
             </div>
 

@@ -93,6 +93,45 @@ export default function GestionTorneos() {
     )
   })
 
+  const getAccionesTorneo = (t) => [
+    {
+      label: 'Editar torneo',
+      icon: <IconEdit className="w-3.5 h-3.5 text-text-muted" />,
+      onClick: () => handleAbrirEditar(t),
+    },
+    {
+      label: 'Equipos participantes',
+      icon: <IconUser className="w-3.5 h-3.5 text-orange-500" />,
+      onClick: () => setTorneoParaEquipos(t),
+    },
+    ...(t.estado === 'activo'
+      ? [
+          {
+            label: 'Finalizar torneo',
+            icon: <IconCheck className="w-3.5 h-3.5 text-orange-500" />,
+            warning: true,
+            onClick: () => setTorneoAFinalizar(t),
+          },
+        ]
+      : []),
+    ...(t.estado !== 'activo' && t.estado !== 'inactivo'
+      ? [
+          {
+            label: 'Activar torneo',
+            icon: <IconPlay className="w-3.5 h-3.5 text-emerald-500" />,
+            success: true,
+            onClick: () => handleToggleEstado(t, 'activo'),
+          },
+        ]
+      : []),
+    {
+      label: 'Dar de baja',
+      icon: <IconTrash className="w-3.5 h-3.5 text-danger" />,
+      danger: true,
+      onClick: () => handleEliminarTorneo(t),
+    },
+  ]
+
   return (
     <div className="flex flex-col gap-4">
       {/* Barra de Control Superior */}
@@ -202,8 +241,59 @@ export default function GestionTorneos() {
         </div>
       ) : (
         <div data-ui="admin-table-container" className="overflow-hidden rounded-xl border border-border bg-surface">
-          <div className="overflow-x-auto">
-            <table data-ui="admin-table" className="w-full min-w-[640px] text-left text-xs">
+          {/* Vista móvil: tarjetas apiladas */}
+          <div className="md:hidden divide-y divide-border/40">
+            {torneosFiltrados.map((t) => (
+              <div key={t.id} className="p-3.5 flex flex-col gap-2 bg-surface hover:bg-page/40 transition-colors">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="font-bold text-text text-xs uppercase font-display">
+                      {t.nombre}
+                    </span>
+                    <span className="text-[10px] text-text-muted tabular-nums">
+                      Ed. {t.edicion}
+                    </span>
+                  </div>
+                  <MenuAcciones
+                    disabled={procesandoId === t.id}
+                    acciones={getAccionesTorneo(t)}
+                  />
+                </div>
+                <div className="flex items-center justify-between text-xs pt-0.5">
+                  <div className="flex items-center gap-2">
+                    <span className="inline-block px-2 py-0.5 rounded text-[10px] tabular-nums font-bold uppercase bg-orange-500/15 text-orange-600 dark:text-orange-400 border border-orange-500/30">
+                      {t.categoria}
+                    </span>
+                    <span className="text-text-muted text-[11px] tabular-nums">
+                      Temp. {t.temporada}
+                    </span>
+                    {t.grupo && (
+                      <span className="text-text-muted text-[11px]">
+                        · Zona {t.grupo}
+                      </span>
+                    )}
+                  </div>
+                  <span
+                    className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border ${
+                      t.estado === 'activo'
+                        ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30'
+                        : t.estado === 'inscripcion'
+                        ? 'bg-sky-500/15 text-sky-400 border-sky-500/30'
+                        : t.estado === 'finalizado'
+                        ? 'bg-neutral-500/15 text-neutral-400 border-neutral-500/30'
+                        : 'bg-rose-500/15 text-rose-400 border-rose-500/30'
+                    }`}
+                  >
+                    {t.estado}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Vista desktop: tabla */}
+          <div className="hidden md:block overflow-x-auto">
+            <table data-ui="admin-table" className="w-full text-left text-xs">
               <thead data-ui="admin-thead" className="border-b border-border/80 bg-surface/80 text-[11px] font-bold uppercase text-text-muted">
                 <tr>
                   <th scope="col" className="py-3 px-4">Torneo / Liga</th>
@@ -272,44 +362,7 @@ export default function GestionTorneos() {
                       <div className="flex items-center justify-center">
                         <MenuAcciones
                           disabled={procesandoId === t.id}
-                          acciones={[
-                            {
-                              label: 'Editar torneo',
-                              icon: <IconEdit className="w-3.5 h-3.5 text-text-muted" />,
-                              onClick: () => handleAbrirEditar(t),
-                            },
-                            {
-                              label: 'Equipos participantes',
-                              icon: <IconUser className="w-3.5 h-3.5 text-orange-500" />,
-                              onClick: () => setTorneoParaEquipos(t),
-                            },
-                            ...(t.estado === 'activo'
-                              ? [
-                                  {
-                                    label: 'Finalizar torneo',
-                                    icon: <IconCheck className="w-3.5 h-3.5 text-orange-500" />,
-                                    warning: true,
-                                    onClick: () => setTorneoAFinalizar(t),
-                                  },
-                                ]
-                              : []),
-                            ...(t.estado !== 'activo' && t.estado !== 'inactivo'
-                              ? [
-                                  {
-                                    label: 'Activar torneo',
-                                    icon: <IconPlay className="w-3.5 h-3.5 text-emerald-500" />,
-                                    success: true,
-                                    onClick: () => handleToggleEstado(t, 'activo'),
-                                  },
-                                ]
-                              : []),
-                            {
-                              label: 'Dar de baja',
-                              icon: <IconTrash className="w-3.5 h-3.5 text-danger" />,
-                              danger: true,
-                              onClick: () => handleEliminarTorneo(t),
-                            },
-                          ]}
+                          acciones={getAccionesTorneo(t)}
                         />
                       </div>
                     </td>

@@ -3,6 +3,7 @@ import api from '../../services/api'
 import Spinner from '../ui/Spinner'
 import { useToast } from '../../context/ToastContext'
 import { formatFecha, formatHorario } from '../../utils/formatFecha'
+import { formatFase } from '../../utils/formatFase'
 import PlanillaPartidoModal from './PlanillaPartidoModal'
 import ModalEditarPartido from './ModalEditarPartido'
 import ModalProgramarPartido from './ModalProgramarPartido'
@@ -216,16 +217,105 @@ export default function GestionPartidos({ initialTorneoId, onTorneoChange }) {
         </div>
       ) : (
         <div data-ui="admin-table" className="overflow-hidden rounded-xl border border-border bg-surface">
-          <div className="overflow-x-auto">
+          {/* Vista móvil: tarjetas adaptables sin scroll horizontal */}
+          <div className="md:hidden divide-y divide-border/40">
+            {partidosFiltrados.map((p) => {
+              const jugado = p.jugado
+              const localGano = jugado && p.pts_local > p.pts_visitante
+              const visitGano = jugado && p.pts_visitante > p.pts_local
+
+              return (
+                <div key={p.id} className="p-3.5 flex flex-col gap-2.5 bg-surface hover:bg-page/40 transition-colors">
+                  {/* Cabecera: Fecha, Fase y Estado */}
+                  <div className="flex items-center justify-between text-xs">
+                    <div className="flex items-center gap-2">
+                      <span className="font-bold text-orange-500 font-athletic">F{p.numero_fecha || 1}</span>
+                      <span className="text-border">·</span>
+                      <span className="text-[11px] text-text-muted font-medium">{formatFase(p.fase)}</span>
+                    </div>
+                    {jugado ? (
+                      <span className="inline-flex items-center px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-400 font-bold text-[10px] uppercase border border-emerald-500/30">
+                        Finalizado
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center px-2 py-0.5 rounded bg-neutral-500/15 text-neutral-400 font-bold text-[10px] uppercase border border-neutral-500/30">
+                        Pendiente
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Equipos y Marcador */}
+                  <div className="flex items-center justify-between gap-3 py-1">
+                    <div className="flex-1 min-w-0">
+                      <div className={`text-xs font-semibold truncate ${localGano ? 'text-orange-500 font-bold' : 'text-text'}`}>
+                        {p.equipo_local}
+                      </div>
+                      <div className={`text-xs font-semibold truncate mt-1.5 ${visitGano ? 'text-orange-500 font-bold' : 'text-text'}`}>
+                        {p.equipo_visitante}
+                      </div>
+                    </div>
+                    <div className="shrink-0 flex flex-col items-end gap-1.5">
+                      {jugado ? (
+                        <>
+                          <span className={`text-xs font-bold tabular-nums px-2 py-0.5 rounded bg-base ${localGano ? 'text-orange-500' : 'text-text'}`}>
+                            {p.pts_local}
+                          </span>
+                          <span className={`text-xs font-bold tabular-nums px-2 py-0.5 rounded bg-base ${visitGano ? 'text-orange-500' : 'text-text'}`}>
+                            {p.pts_visitante}
+                          </span>
+                        </>
+                      ) : (
+                        <span className="text-[11px] font-bold text-text-muted px-2 py-1 bg-base rounded border border-border">
+                          VS
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Sede y Acciones */}
+                  <div className="flex items-center justify-between gap-2 text-[11px] text-text-muted pt-1">
+                    <div className="truncate min-w-0">
+                      <div>{formatFecha(p.fecha)} {p.horario && `· ${formatHorario(p.horario)} hs`}</div>
+                      {p.cancha && <div className="text-text/70 truncate text-[10px]">{p.cancha}</div>}
+                    </div>
+
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      <button
+                        type="button"
+                        onClick={() => setPartidoAEditar(p)}
+                        className="h-7 px-2.5 rounded-lg border border-border bg-surface text-xs font-semibold text-text hover:border-orange-500/50 hover:text-orange-500 transition-colors inline-flex items-center justify-center cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-orange-500"
+                      >
+                        Editar
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setPartidoSeleccionado(p)}
+                        className={
+                          jugado
+                            ? 'h-7 px-2.5 rounded-lg border border-border bg-surface text-xs font-semibold text-text hover:border-orange-500/50 hover:text-orange-500 transition-colors inline-flex items-center justify-center cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-orange-500'
+                            : 'h-7 px-2.5 rounded-lg border border-orange-500/40 bg-orange-500/15 hover:bg-orange-500/25 text-orange-600 dark:text-orange-400 font-display font-bold text-xs uppercase active:scale-95 transition-colors inline-flex items-center justify-center cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-orange-500'
+                        }
+                      >
+                        {jugado ? 'Planilla' : 'Cargar'}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+
+          {/* Vista desktop: tabla completa */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-left border-collapse text-xs">
               <thead data-ui="table-head" className="border-b border-border/80 bg-surface/80 text-[11px] font-bold uppercase tracking-wider text-text-muted">
                 <tr>
                   <th className="py-3 px-3 w-16">Fecha</th>
-                  <th className="py-3 px-3 w-28">Fase</th>
+                  <th className="py-3 px-3 w-36">Fase</th>
                   <th className="py-3 px-3 text-right">Local</th>
                   <th className="py-3 px-3 text-center w-24">Resultado</th>
                   <th className="py-3 px-3">Visitante</th>
-                  <th className="py-3 px-3 w-40">Cancha / Horario</th>
+                  <th className="py-3 px-3 w-44">Cancha / Horario</th>
                   <th className="py-3 px-3 w-24 text-center">Estado</th>
                   <th className="py-3 px-4 w-32 text-right">Acciones</th>
                 </tr>
@@ -242,8 +332,8 @@ export default function GestionPartidos({ initialTorneoId, onTorneoChange }) {
                         F{p.numero_fecha || 1}
                       </td>
 
-                      <td className="py-3 px-3 text-text-muted truncate max-w-[100px]">
-                        {p.fase}
+                      <td className="py-3 px-3 text-text-muted whitespace-nowrap">
+                        {formatFase(p.fase)}
                       </td>
 
                       {/* Local */}
@@ -272,7 +362,7 @@ export default function GestionPartidos({ initialTorneoId, onTorneoChange }) {
                       </td>
 
                       {/* Cancha / Horario */}
-                      <td className="py-3 px-3 text-text-muted text-[10px] truncate max-w-[150px]">
+                      <td className="py-3 px-3 text-text-muted text-[10px] truncate max-w-[180px]">
                         <div>{formatFecha(p.fecha)} {p.horario && `· ${formatHorario(p.horario)}`}</div>
                         {p.cancha && <div className="text-text/80 font-medium truncate">{p.cancha}</div>}
                       </td>

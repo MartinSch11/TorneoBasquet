@@ -3,7 +3,6 @@ import { createPortal } from 'react-dom'
 import { NavLink, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { useTheme } from '../../context/ThemeContext'
-import LoginModal from '../ui/LoginModal'
 import {
   IconSun,
   IconMoon,
@@ -72,7 +71,7 @@ function BotonTema() {
   )
 }
 
-function AccederBoton({ onAbrirLogin, onAccionMenu, esMobile }) {
+function AccederBoton({ onAccionMenu, esMobile }) {
   const { user, logout } = useAuth()
   const [menu, setMenu] = useState(false)
   const userMenuRef = useRef(null)
@@ -98,22 +97,7 @@ function AccederBoton({ onAbrirLogin, onAccionMenu, esMobile }) {
     }
   }, [menu])
 
-  if (!user) {
-    return (
-      <button
-        type="button"
-        onClick={() => {
-          onAbrirLogin?.()
-          onAccionMenu?.()
-        }}
-        className={`flex items-center justify-center gap-2 rounded-xl bg-orange-600 hover:bg-orange-500 font-semibold text-white transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 active:scale-95 ${
-          esMobile ? 'w-full py-3 text-base' : 'px-5 py-2 text-sm'
-        }`}
-      >
-        <span>Acceder</span>
-      </button>
-    )
-  }
+  if (!user) return null
 
   return (
     <div ref={userMenuRef} className={esMobile ? 'w-full' : 'relative'}>
@@ -166,8 +150,8 @@ function AccederBoton({ onAbrirLogin, onAccionMenu, esMobile }) {
 }
 
 export default function Navbar() {
+  const { user, abrirLogin } = useAuth()
   const [drawer, setDrawer] = useState(false)
-  const [loginModalAbierto, setLoginModalAbierto] = useState(false)
   const [subAbierto, setSubAbierto] = useState('')
   const [linkActivo, setLinkActivo] = useState('')
   const navRef = useRef(null)
@@ -344,12 +328,14 @@ export default function Navbar() {
         <div className="hidden md:block">{renderItems(false)}</div>
         <div className="flex items-center gap-2">
           <BotonTema />
-          <div className="hidden md:block">
-            <AccederBoton
-              onAbrirLogin={() => setLoginModalAbierto(true)}
-              esMobile={false}
-            />
-          </div>
+          {user && (
+            <div className="hidden md:block">
+              <AccederBoton
+                onAccionMenu={() => {}}
+                esMobile={false}
+              />
+            </div>
+          )}
         </div>
       </div>
 
@@ -382,21 +368,28 @@ export default function Navbar() {
                 {renderItems(true)}
               </div>
               <div data-ui="drawer-footer" className="mt-6 border-t border-border pt-5">
-                <AccederBoton
-                  onAbrirLogin={() => setLoginModalAbierto(true)}
-                  onAccionMenu={() => setDrawer(false)}
-                  esMobile={true}
-                />
+                {user ? (
+                  <AccederBoton
+                    onAccionMenu={() => setDrawer(false)}
+                    esMobile={true}
+                  />
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setDrawer(false)
+                      abrirLogin()
+                    }}
+                    className="text-xs text-text-muted hover:text-orange-500 transition-colors w-full text-center py-2 font-medium"
+                  >
+                    Acceso Administración
+                  </button>
+                )}
               </div>
             </div>
           </div>,
           document.body
         )}
-
-      {/* Modal de Inicio de Sesión fuera del drawer */}
-      {loginModalAbierto && (
-        <LoginModal onClose={() => setLoginModalAbierto(false)} />
-      )}
     </header>
   )
 }

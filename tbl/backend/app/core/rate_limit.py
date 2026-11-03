@@ -4,13 +4,14 @@ from collections import defaultdict
 
 
 class SlidingWindowRateLimiter:
-    """Limitador de tasa en memoria por ventana deslizante.
+    """Limitador de tasa en memoria por ventana deslizante y bloqueo fijo (lockout).
 
     Permite mitigar ataques de fuerza bruta en endpoints sensibles como /login.
     """
 
     def __init__(self) -> None:
         self._attempts: dict[str, list[float]] = defaultdict(list)
+        self._lockouts: dict[str, float] = {}
 
     def _limpiar_antiguos(self, key: str, ahora: float, window_seconds: int) -> None:
         corte = ahora - window_seconds
@@ -30,13 +31,26 @@ class SlidingWindowRateLimiter:
             return False, 0
 
         ahora = time.time()
+
+        # 1. Verificar si hay un período de bloqueo activo
+        bloqueado_hasta = self._lockouts.get(key, 0)
+        if ahora < bloqueado_hasta:
+            tiempo_restante = int(bloqueado_hasta - ahora) + 1
+            return True, tiempo_restante
+        elif key in self._lockouts:
+            # El bloqueo expiró: reiniciar el ciclo de intentos limpio
+            self._lockouts.pop(key, None)
+            self._attempts.pop(key, None)
+
+        # 2. Verificar intentos acumulados en la ventana deslizante
         self._limpiar_antiguos(key, ahora, window_seconds)
         intentos = self._attempts.get(key, [])
 
         if len(intentos) >= max_attempts:
-            primer_intento = intentos[0]
-            tiempo_restante = int(max(1, window_seconds - (ahora - primer_intento)))
-            return True, tiempo_restante
+            # Al alcanzar los intentos máximos, se activa el bloqueo completo por window_seconds
+            self._lockouts[key] = ahora + window_seconds
+            self._attempts.pop(key, None)
+            return True, window_seconds
 
         return False, 0
 
@@ -45,8 +59,9 @@ class SlidingWindowRateLimiter:
         self._attempts[key].append(time.time())
 
     def reset(self, key: str) -> None:
-        """Limpia el historial de intentos para la clave (por ejemplo, tras login exitoso)."""
+        """Limpia el historial de intentos y bloqueos para la clave."""
         self._attempts.pop(key, None)
+        self._lockouts.pop(key, None)
 
 
 # Instancia singleton para control de acceso

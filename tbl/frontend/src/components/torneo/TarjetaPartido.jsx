@@ -1,13 +1,7 @@
 import { Link } from 'react-router-dom'
 import { formatFecha, formatHorario } from '../../utils/formatFecha'
+import { formatFase } from '../../utils/formatFase'
 import EscudoEquipo from '../ui/EscudoEquipo'
-
-function formatFase(fase) {
-  if (!fase) return 'Fase Regular'
-  const f = fase.toUpperCase()
-  if (f.includes('PROMOCION') || f.includes('DESCENSO')) return 'PROMOCIÓN'
-  return fase
-}
 
 export default function TarjetaPartido({ partido, jugado = undefined, mostrarBadge = false }) {
   const tienePuntosValidos =

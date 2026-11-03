@@ -9,6 +9,10 @@ export function AuthProvider({ children }) {
     const raw = localStorage.getItem(USER_KEY) || sessionStorage.getItem(USER_KEY)
     return raw ? JSON.parse(raw) : null
   })
+  const [loginModalAbierto, setLoginModalAbierto] = useState(false)
+
+  const abrirLogin = useCallback(() => setLoginModalAbierto(true), [])
+  const cerrarLogin = useCallback(() => setLoginModalAbierto(false), [])
 
   useEffect(() => {
     const handleAuthExpired = () => {
@@ -42,7 +46,17 @@ export function AuthProvider({ children }) {
   }, [])
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, setUsuario }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        login,
+        logout,
+        setUsuario,
+        loginModalAbierto,
+        abrirLogin,
+        cerrarLogin,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   )

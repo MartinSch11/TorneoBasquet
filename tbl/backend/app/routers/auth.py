@@ -35,7 +35,7 @@ async def login(
     if bloqueado:
         raise HTTPException(
             status_code=status.HTTP_429_TOO_MANY_REQUESTS,
-            detail=f"Demasiados intentos fallidos. Intente nuevamente en {retry_after} segundos.",
+            detail=f"Demasiados intentos. Esperá para volver a intentar.",
             headers={"Retry-After": str(retry_after)},
         )
 
@@ -46,12 +46,12 @@ async def login(
         login_rate_limiter.record_attempt(rate_key)
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Error en login! Usuario o contraseña incorrectos.",
+            detail="El usuario o la contraseña no coinciden.",
         )
     if not user.activo:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Usuario desactivado. Contacte al administrador.",
+            detail="Tu cuenta de usuario se encuentra desactivada. Comunicate con la administración.",
         )
 
     login_rate_limiter.reset(rate_key)

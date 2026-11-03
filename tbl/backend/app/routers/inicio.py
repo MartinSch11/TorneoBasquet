@@ -80,13 +80,18 @@ async def inicio(db: AsyncSession = Depends(get_db)) -> dict:
 
         mapa_fases = {
             "FASE REGULAR": "FASE REGULAR",
+            "PLAYOFFS": "PLAYOFFS",
+            "PLAYOFF": "PLAYOFFS",
+            "PLAY-IN": "PLAY-IN",
+            "PLAYIN": "PLAY-IN",
             "OCTAVOS": "OCTAVOS DE FINAL",
+            "OCTAVOS DE FINAL": "OCTAVOS DE FINAL",
             "CUARTOS": "CUARTOS DE FINAL",
-            "SEMIFINAL": "SEMIFINALES",
-            "FINAL": "GRAN FINAL",
-            "PROMOCION / DESCENSO": "PROMOCIÓN",
-            "PROMOCION": "PROMOCIÓN",
-            "PROMOCIÓN": "PROMOCIÓN",
+            "CUARTOS DE FINAL": "CUARTOS DE FINAL",
+            "SEMIFINAL": "SEMIFINAL",
+            "SEMIFINALES": "SEMIFINAL",
+            "FINAL": "FINAL",
+            "GRAN FINAL": "FINAL",
         }
         etapa_actual = mapa_fases.get(fase_raw.upper(), normalizar_fase(fase_raw))
     else:

@@ -13,7 +13,7 @@ async def test_login_ok(client) -> None:
 async def test_login_incorrecto(client) -> None:
     res = client.post("/api/v1/auth/login", json={"usuario": "admin", "password": "mal"})
     assert res.status_code == 401
-    assert "incorrectos" in res.json()["detail"]
+    assert "coinciden" in res.json()["detail"]
 
 
 async def test_me(client, admin_token) -> None:

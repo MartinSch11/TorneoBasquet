@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom'
 import api from '../../services/api'
 import { IconClose } from '../ui/Icon'
 import useBodyLock from '../../hooks/useBodyLock'
+import { FASES_TORNEO } from '../../utils/formatFase'
 
 export default function ModalEditarPartido({
   isOpen,
@@ -191,12 +192,11 @@ export default function ModalEditarPartido({
                 onChange={(e) => setFase(e.target.value)}
                 className="h-9 rounded-xl border border-border bg-page px-3 text-xs font-semibold text-text outline-none focus:border-orange-500 focus-visible:ring-2 focus-visible:ring-orange-500 transition-colors"
               >
-                <option value="FASE REGULAR">FASE REGULAR</option>
-                <option value="OCTAVOS DE FINAL">OCTAVOS DE FINAL</option>
-                <option value="CUARTOS DE FINAL">CUARTOS DE FINAL</option>
-                <option value="SEMIFINAL">SEMIFINAL</option>
-                <option value="FINAL">FINAL</option>
-                <option value="PROMOCION / DESCENSO">PROMOCION / DESCENSO</option>
+                {FASES_TORNEO.map((f) => (
+                  <option key={f.value} value={f.value}>
+                    {f.label}
+                  </option>
+                ))}
               </select>
             </div>
 

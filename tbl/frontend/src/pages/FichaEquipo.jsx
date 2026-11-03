@@ -5,6 +5,7 @@ import { useTorneo } from '../hooks/useTorneo'
 import api from '../services/api'
 import Spinner from '../components/ui/Spinner'
 import EscudoEquipo from '../components/ui/EscudoEquipo'
+import { formatFase } from '../utils/formatFase'
 
 export default function FichaEquipo() {
   const { id } = useParams()
@@ -113,7 +114,7 @@ export default function FichaEquipo() {
                     className="hover:bg-orange-500/10 transition-colors"
                   >
                     <td className="px-4 py-3 font-semibold uppercase text-xs text-text-muted whitespace-nowrap">
-                      {p.fase}
+                      {formatFase(p.fase)}
                     </td>
                     <td className="px-3 py-3 font-medium text-text whitespace-nowrap">
                       {p.instancia}

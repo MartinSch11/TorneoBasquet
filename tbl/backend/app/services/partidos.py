@@ -9,8 +9,18 @@ def normalizar_fase(fase: str | None) -> str:
     if not fase:
         return "FASE REGULAR"
     f = fase.strip().upper()
-    if "PROMOCION" in f or "DESCENSO" in f:
-        return "PROMOCIÓN"
+    if f in ("PLAYOFF", "PLAYOFFS"):
+        return "PLAYOFFS"
+    if f in ("PLAY-IN", "PLAYIN"):
+        return "PLAY-IN"
+    if "OCTAVOS" in f:
+        return "OCTAVOS DE FINAL"
+    if "CUARTOS" in f:
+        return "CUARTOS DE FINAL"
+    if "SEMIFINAL" in f:
+        return "SEMIFINAL"
+    if "FINAL" in f:
+        return "FINAL"
     return fase
 
 

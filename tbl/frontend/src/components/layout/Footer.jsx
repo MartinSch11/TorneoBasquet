@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { useAuth } from '../../context/AuthContext'
 
 // Configuración de la empresa desarrolladora
 export const EMPRESA_DESARROLLADORA = {
@@ -44,6 +45,7 @@ function IconWhatsApp({ className = 'w-4 h-4' }) {
 
 export default function Footer() {
   const currentYear = new Date().getFullYear()
+  const { user, abrirLogin } = useAuth()
 
   return (
     <footer data-ui="footer" className="relative border-t border-border bg-surface text-text overflow-hidden transition-colors duration-300">
@@ -134,9 +136,19 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link to="/admin" className="hover:text-orange-600 dark:hover:text-orange-400 transition-colors">
-                  Panel de Administración
-                </Link>
+                {user ? (
+                  <Link to="/admin" className="hover:text-orange-600 dark:hover:text-orange-400 transition-colors">
+                    Panel de Administración
+                  </Link>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={abrirLogin}
+                    className="hover:text-orange-600 dark:hover:text-orange-400 transition-colors text-left"
+                  >
+                    Acceso Administración
+                  </button>
+                )}
               </li>
             </ul>
           </div>
@@ -193,11 +205,28 @@ export default function Footer() {
 
         {/* Separador inferior */}
         <div className="mt-12 border-t border-border/60 pt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between text-xs text-text-muted" data-ui="footer-bottom">
-          {/* Copyright LBA */}
-          <div>
+          {/* Copyright LBA & Acceso Staff */}
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
             <p className="font-sans">
               © {currentYear} <span className="font-bold text-text">LBA</span> - Liga de Básquetbol Amateur. Todos los derechos reservados.
             </p>
+            <span className="hidden sm:inline text-border">·</span>
+            {user ? (
+              <Link
+                to="/admin"
+                className="text-[11px] font-semibold text-text-muted hover:text-orange-500 transition-colors inline-flex items-center gap-1"
+              >
+                <span>Panel Admin ({user.usuario})</span>
+              </Link>
+            ) : (
+              <button
+                type="button"
+                onClick={abrirLogin}
+                className="text-[11px] font-medium text-text-muted hover:text-orange-500 transition-colors"
+              >
+                Acceso Administración
+              </button>
+            )}
           </div>
 
           {/* Marca de Agua / Créditos Corporativos de la Empresa Desarrolladora */}

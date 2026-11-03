@@ -14,8 +14,12 @@ import EstadisticasJugadores from './pages/EstadisticasJugadores'
 import Galeria from './pages/Galeria'
 import Admin from './pages/Admin'
 import RequireAdmin from './components/route/RequireAdmin'
+import LoginModal from './components/ui/LoginModal'
+import { useAuth } from './context/AuthContext'
 
 function Layout() {
+  const { loginModalAbierto, cerrarLogin } = useAuth()
+
   return (
     <div className="flex min-h-[100dvh] flex-col bg-page text-text transition-colors duration-300">
       <Navbar />
@@ -23,6 +27,7 @@ function Layout() {
         <Outlet />
       </main>
       <Footer />
+      {loginModalAbierto && <LoginModal onClose={cerrarLogin} />}
     </div>
   )
 }

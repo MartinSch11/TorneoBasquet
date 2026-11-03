@@ -83,6 +83,31 @@ export default function GestionSponsors() {
     )
   })
 
+  const getAccionesSponsor = (s) => [
+    {
+      label: 'Editar sponsor',
+      icon: <IconEdit className="w-3.5 h-3.5 text-text-muted" />,
+      onClick: () => handleAbrirEditar(s),
+    },
+    {
+      label: s.activo ? 'Inactivar sponsor' : 'Activar sponsor',
+      icon: s.activo ? (
+        <IconPause className="w-3.5 h-3.5 text-orange-500" />
+      ) : (
+        <IconPlay className="w-3.5 h-3.5 text-emerald-500" />
+      ),
+      warning: Boolean(s.activo),
+      success: !s.activo,
+      onClick: () => handleToggleActivo(s),
+    },
+    {
+      label: 'Eliminar sponsor',
+      icon: <IconTrash className="w-3.5 h-3.5 text-danger" />,
+      danger: true,
+      onClick: () => handleEliminarSponsor(s),
+    },
+  ]
+
   return (
     <div className="flex flex-col gap-4">
       {/* Barra de Control Superior */}
@@ -180,8 +205,63 @@ export default function GestionSponsors() {
         </div>
       ) : (
         <div data-ui="admin-table-container" className="overflow-hidden rounded-xl border border-border bg-surface">
-          <div className="overflow-x-auto">
-            <table data-ui="admin-table" className="w-full min-w-[580px] text-left text-xs">
+          {/* Vista móvil: tarjetas de sponsors */}
+          <div className="md:hidden divide-y divide-border/40">
+            {sponsorsFiltrados.map((s) => (
+              <div key={s.id} className="p-3.5 flex flex-col gap-2.5 bg-surface hover:bg-page/40 transition-colors">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <img
+                      src={s.logo_url}
+                      alt={s.nombre}
+                      width="36"
+                      height="36"
+                      loading="lazy"
+                      className="h-9 w-9 rounded-lg object-contain bg-base border border-border p-1 shrink-0"
+                      onError={(e) => {
+                        e.target.style.display = 'none'
+                      }}
+                    />
+                    <div>
+                      <span className="font-semibold text-text text-xs">{s.nombre}</span>
+                      {s.url_sitio && (
+                        <a
+                          href={s.url_sitio}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-[11px] text-orange-600 dark:text-orange-400 hover:underline block font-medium"
+                        >
+                          {s.url_sitio.replace(/^https?:\/\//, '')}
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                  <MenuAcciones
+                    disabled={procesandoId === s.id}
+                    acciones={getAccionesSponsor(s)}
+                  />
+                </div>
+                <div className="flex items-center justify-between text-xs pt-0.5">
+                  <span className="inline-flex items-center gap-1 text-[11px] text-text-muted">
+                    Orden: <span className="font-bold tabular-nums text-text">{s.orden}</span>
+                  </span>
+                  <span
+                    className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase border ${
+                      s.activo
+                        ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30'
+                        : 'bg-neutral-500/15 text-neutral-400 border-neutral-500/30'
+                    }`}
+                  >
+                    {s.activo ? 'Activo' : 'Inactivo'}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Vista desktop: tabla */}
+          <div className="hidden md:block overflow-x-auto">
+            <table data-ui="admin-table" className="w-full text-left text-xs">
               <thead data-ui="admin-thead" className="border-b border-border/80 bg-surface/80 text-[11px] font-bold uppercase text-text-muted">
                 <tr>
                   <th scope="col" className="py-3 px-4">Marca / Empresa</th>
@@ -253,30 +333,7 @@ export default function GestionSponsors() {
                       <div className="flex items-center justify-center">
                         <MenuAcciones
                           disabled={procesandoId === s.id}
-                          acciones={[
-                            {
-                              label: 'Editar sponsor',
-                              icon: <IconEdit className="w-3.5 h-3.5 text-text-muted" />,
-                              onClick: () => handleAbrirEditar(s),
-                            },
-                            {
-                              label: s.activo ? 'Inactivar sponsor' : 'Activar sponsor',
-                              icon: s.activo ? (
-                                <IconPause className="w-3.5 h-3.5 text-orange-500" />
-                              ) : (
-                                <IconPlay className="w-3.5 h-3.5 text-emerald-500" />
-                              ),
-                              warning: Boolean(s.activo),
-                              success: !s.activo,
-                              onClick: () => handleToggleActivo(s),
-                            },
-                            {
-                              label: 'Eliminar sponsor',
-                              icon: <IconTrash className="w-3.5 h-3.5 text-danger" />,
-                              danger: true,
-                              onClick: () => handleEliminarSponsor(s),
-                            },
-                          ]}
+                          acciones={getAccionesSponsor(s)}
                         />
                       </div>
                     </td>

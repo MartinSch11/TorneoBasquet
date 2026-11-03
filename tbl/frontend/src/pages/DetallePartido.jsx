@@ -5,13 +5,7 @@ import Spinner from '../components/ui/Spinner'
 import EscudoEquipo from '../components/ui/EscudoEquipo'
 import TarjetaJugadorModal from '../components/torneo/TarjetaJugadorModal'
 import { formatFecha, formatHorario } from '../utils/formatFecha'
-
-function formatFase(fase) {
-  if (!fase) return 'Fase Regular'
-  const f = fase.toUpperCase()
-  if (f.includes('PROMOCION') || f.includes('DESCENSO')) return 'PROMOCIÓN'
-  return fase
-}
+import { formatFase } from '../utils/formatFase'
 
 export default function DetallePartido() {
   const { id } = useParams()
